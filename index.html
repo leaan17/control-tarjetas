@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Tarjetas</title>
+    <meta name="theme-color" content="#0b0f19">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./icons/app.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./icons/app.svg">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
+                        },
+                        darkbg: '#0b0f19',
+                        darkcard: '#161e2e',
+                        darkcardborder: '#26334d',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Modos Dark / Light */
+        html.dark body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+
+        html.light body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Panel Glass Dark vs Light */
+        html.dark .glass-panel {
+            background: rgba(22, 30, 46, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        html.light .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        html.light .app-container {
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        html.dark .app-container {
+            background-color: #0b0f19;
+            border-color: rgba(30, 41, 59, 0.5);
+        }
+
+        /* Text color overrides for light mode */
+        html.light .text-white { color: #0f172a !important; }
+        html.light .text-slate-100 { color: #1e293b !important; }
+        html.light .text-slate-200 { color: #334155 !important; }
+        html.light .text-slate-300 { color: #475569 !important; }
+        html.light .text-slate-400 { color: #64748b !important; }
+        html.light .bg-slate-900 { background-color: #ffffff !important; }
+        html.light .bg-slate-900\/60 { background-color: #f1f5f9 !important; }
+        html.light .bg-slate-900\/40 { background-color: #f8fafc !important; }
+        html.light .bg-slate-800 { background-color: #e2e8f0 !important; }
+        html.light .bg-slate-800\/80 { background-color: #f1f5f9 !important; }
+        html.light .border-slate-800 { border-color: #cbd5e1 !important; }
+        html.light .border-slate-700 { border-color: #cbd5e1 !important; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+
+        select, input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            outline: none !important;
+        }
+
+        input[type="date"] { color-scheme: dark; }
+        html.light input[type="date"] { color-scheme: light; }
+
+        .custom-select-wrapper { position: relative; }
+        .custom-select-wrapper::after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #818cf8;
+            pointer-events: none;
+            font-size: 0.85rem;
+        }
+
+        .app-input {
+            width: 100%;
+            border-radius: 0.85rem;
+            padding: 0.65rem 0.9rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        html.dark .app-input {
+            background-color: rgba(22, 30, 46, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f3f4f6;
+        }
+
+        html.light .app-input {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+        }
+
+        .app-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-plus-glow { box-shadow: 0 0 22px rgba(99, 102, 241, 0.45); }
+
+        .card-carousel {
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+        .card-carousel-item {
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+        }
+
+        .card-grad-visa { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e3a8a 100%); }
+        .card-grad-master { background: linear-gradient(135deg, #2a080c 0%, #4c0519 40%, #881337 100%); }
+        .card-grad-amex { background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #0f766e 100%); }
+        .card-grad-cabal { background: linear-gradient(135deg, #3f2b96 0%, #a8c0ff 100%); }
+        .card-grad-naranja { background: linear-gradient(135deg, #7c2d12 0%, #ea580c 100%); }
+    </style>
+</head>
+<body class="min-h-screen pb-24 flex justify-center antialiased">
+
+    <!-- Mobile App Container -->
+    <div class="app-container w-full max-w-md min-h-screen flex flex-col justify-between relative shadow-2xl border-x">
+        
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-5 space-y-6 overflow-y-auto">
+
+            <!-- HEADER / BIENVENIDA -->
+            <header class="flex justify-between items-center pt-2">
+                <div>
+                    <span class="text-xs font-semibold tracking-wider text-indigo-500 uppercase">Bienvenido de nuevo</span>
+                    <h1 id="user-greeting" class="text-2xl font-bold text-white flex items-center gap-2">
+                        ¡Hola, Guest! <span class="text-xl">👋</span>
+                    </h1>
+                </div>
+                <button onclick="openLoginModal()" class="w-10 h-10 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-indigo-400 hover:text-white transition-all shadow-md">
+                    <i id="user-avatar-icon" class="fa-solid fa-user"></i>
+                </button>
+            </header>
+
+            <!-- PANTALLA 1: INICIO (HOME) -->
+            <section id="screen-home" class="space-y-5">
+                <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-600/10 rounded-full blur-2xl pointer-events-none"></div>
+                    
+                    <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-wallet text-indigo-400"></i> Deuda Total en Tarjetas
+                        </span>
+                        <span class="text-[11px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">
+                            Resumen General
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800/80">
+                            <p class="text-xs text-slate-400 font-medium mb-1">Pesos ($)</p>
+                            <p id="total-debt-ars" class="text-xl font-extrabold text-white">$ 0</p>
+                        </div>
+                        <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800/80">
+                            <p class="text-xs text-slate-400 font-medium mb-1">Dólares (US$)</p>
+                            <p id="total-debt-usd" class="text-xl font-extrabold text-emerald-400">US$ 0,00</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800/60 flex justify-between items-center text-sm">
+                        <div class="space-y-0.5">
+                            <p class="text-xs text-slate-400">Límite Total</p>
+                            <p id="total-limit-ars" class="font-semibold text-slate-200">$ 0</p>
+                        </div>
+                        <div class="text-right space-y-0.5">
+                            <p class="text-xs text-slate-400">Límite Disponible</p>
+                            <p id="total-available-ars" class="font-semibold text-emerald-400">$ 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center px-1">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            Mis Tarjetas
+                            <span id="card-count-badge" class="bg-slate-800 text-slate-400 text-xs px-2.5 py-0.5 rounded-full font-medium">0</span>
+                        </h2>
+                        <button onclick="openCardModal()" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 rounded-xl transition-all">
+                            <i class="fa-solid fa-plus text-xs"></i> Agregar Tarjeta
+                        </button>
+                    </div>
+
+                    <div id="cards-container" class="space-y-3.5"></div>
+                </div>
+            </section>
+
+            <!-- PANTALLA 2: TARJETAS Y MOVIMIENTOS -->
+            <section id="screen-cards" class="hidden space-y-5">
+                <div class="px-1">
+                    <h2 class="text-xl font-bold text-white">Tarjetas y Movimientos</h2>
+                    <p class="text-xs text-slate-400">Deslizá para cambiar de tarjeta</p>
+                </div>
+
+                <div class="relative">
+                    <div id="cards-carousel" class="card-carousel flex gap-4 overflow-x-auto no-scrollbar py-2 snap-x snap-mandatory"></div>
+                    <div id="carousel-dots" class="flex justify-center gap-1.5 mt-2"></div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-3xl space-y-3 shadow-xl">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-indigo-400"></i>
+                            <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Movimientos del Mes</span>
+                        </div>
+                        <span id="active-card-name-label" class="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-500/20">-</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div class="bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
+                            <span class="text-xs text-slate-400 font-medium">Total Pesos</span>
+                            <p id="card-month-total-ars" class="text-lg font-bold text-white mt-0.5">$ 0</p>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
+                            <span class="text-xs text-slate-400 font-medium">Total Dólares</span>
+                            <p id="card-month-total-usd" class="text-lg font-bold text-emerald-400 mt-0.5">US$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800">
+                    <button onclick="toggleMovementsAccordion()" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/40 transition-colors text-left">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-list-ul text-slate-400"></i>
+                            <h3 class="text-sm font-bold text-white">Movimientos Actuales</h3>
+                            <span id="movements-count" class="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">0 consumos</span>
+                        </div>
+                        <i id="movements-chevron" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                    </button>
+
+                    <div id="movements-accordion-content" class="hidden p-4 pt-1 space-y-2.5 border-t border-slate-800/80 bg-slate-900/40">
+                        <div id="card-movements-list" class="space-y-2.5"></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-3xl space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+                        <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-indigo-400"></i> Gastos por Categoría
+                        </h3>
+                        <span class="text-xs text-slate-400">Este mes</span>
+                    </div>
+
+                    <div class="relative w-full h-48 flex items-center justify-center">
+                        <canvas id="categoryChart"></canvas>
+                        <div id="chart-empty-msg" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 text-xs hidden">
+                            <i class="fa-solid fa-chart-pie text-3xl mb-1 text-slate-600"></i>
+                            Sin consumos registrados
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANTALLA 3: CUOTAS -->
+            <section id="screen-installments" class="hidden space-y-5">
+                <div class="px-1">
+                    <h2 class="text-xl font-bold text-white">Control de Cuotas</h2>
+                    <p class="text-xs text-slate-400">Compromisos mensuales y proyección</p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-3xl space-y-3 shadow-xl">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+                        <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-check text-indigo-400"></i> Total Cuotas de este Mes
+                        </span>
+                        <span class="text-xs text-indigo-400 font-semibold bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-500/20">A pagar</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div class="bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
+                            <span class="text-xs text-slate-400 font-medium">Cuotas en Pesos</span>
+                            <p id="installments-month-ars" class="text-lg font-bold text-white mt-0.5">$ 0</p>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
+                            <span class="text-xs text-slate-400 font-medium">Cuotas en Dólares</span>
+                            <p id="installments-month-usd" class="text-lg font-bold text-emerald-400 mt-0.5">US$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+                        <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-indigo-400"></i> Proyección de Cuotas (Próximos Meses)
+                        </h3>
+                    </div>
+
+                    <div class="relative w-full h-44">
+                        <canvas id="projectionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800">
+                    <button onclick="toggleActivePlansAccordion()" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/40 transition-colors text-left">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                            <h3 class="text-sm font-bold text-white">Planes Activos</h3>
+                            <span id="active-plans-count" class="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">0 planes</span>
+                        </div>
+                        <i id="active-plans-chevron" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                    </button>
+
+                    <div id="active-plans-accordion-content" class="hidden p-4 pt-1 space-y-2.5 border-t border-slate-800/80 bg-slate-900/40">
+                        <div id="active-plans-list" class="space-y-2.5"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANTALLA 4: MÁS OPCIONES -->
+            <section id="screen-more" class="hidden space-y-5">
+                <div class="px-1">
+                    <h2 class="text-xl font-bold text-white">Más Opciones</h2>
+                    <p class="text-xs text-slate-400">Cotizaciones, ajustes y sesión</p>
+                </div>
+
+                <!-- COTIZACIONES DÓLAR DE HOY -->
+                <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-dollar-sign text-emerald-400"></i>
+                            <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Cotización del Dólar Hoy</h3>
+                        </div>
+                        <button onclick="fetchDollarRates()" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                            <i class="fa-solid fa-rotate text-[10px]"></i> Actualizar
+                        </button>
+                    </div>
+
+                    <div id="dollar-rates-container" class="grid grid-cols-2 gap-2.5">
+                        <!-- Cargando cotizaciones... -->
+                        <div class="col-span-2 text-center py-4 text-xs text-slate-500">
+                            <i class="fa-solid fa-spinner fa-spin text-base text-indigo-400 mb-1"></i>
+                            <p>Cargando cotizaciones oficiales...</p>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 text-right">Fuente: DolarApi.com</p>
+                </div>
+
+                <!-- PREFERENCIAS Y APARIENCIA -->
+                <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+                    <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-indigo-400"></i> Apariencia & Datos
+                    </h3>
+
+                    <div class="space-y-3">
+                        <!-- TOGGLE TEMA MODO CLARO / MODO OSCURO -->
+                        <div class="flex justify-between items-center bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white">Modo Claro / Oscuro</p>
+                                    <p id="theme-status-text" class="text-[10px] text-slate-400">Modo Oscuro activo</p>
+                                </div>
+                            </div>
+                            <button onclick="toggleTheme()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md">
+                                Cambiar
+                            </button>
+                        </div>
+
+                        <!-- BORRAR TODOS LOS DATOS -->
+                        <div class="flex justify-between items-center bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                                    <i class="fa-solid fa-trash-arrow-up"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white">Borrar Todos los Datos</p>
+                                    <p class="text-[10px] text-slate-400">Restablece tarjetas y consumos</p>
+                                </div>
+                            </div>
+                            <button onclick="openResetModal()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-xs px-3.5 py-2 rounded-xl font-medium transition-all">
+                                Borrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SESIÓN DE USUARIO -->
+                <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+                    <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-indigo-400"></i> Cuenta de Usuario
+                    </h3>
+
+                    <div id="user-profile-card" class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div>
+                                <p id="profile-email-text" class="text-xs font-bold text-white">Sin sesión iniciada</p>
+                                <p id="profile-status-text" class="text-[10px] text-slate-400">Iniciá sesión para sincronizar tus datos</p>
+                            </div>
+                        </div>
+                        <button id="profile-action-btn" onclick="openLoginModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md">
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BARRA DE NAVEGACIÓN INFERIOR (BOTTOM NAV) -->
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-slate-900/95 backdrop-blur-md border-t border-slate-800/80 px-4 py-2 z-40">
+            <div class="grid grid-cols-5 items-center">
+                <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center py-1 text-indigo-400 font-medium text-[11px] transition-colors">
+                    <i class="fa-solid fa-house-chimney text-lg mb-1"></i>
+                    <span>Inicio</span>
+                </button>
+
+                <button onclick="switchTab('cards')" id="nav-cards" class="nav-btn flex flex-col items-center py-1 text-slate-400 hover:text-slate-200 font-medium text-[11px] transition-colors">
+                    <i class="fa-regular fa-credit-card text-lg mb-1"></i>
+                    <span>Tarjetas</span>
+                </button>
+
+                <div class="flex justify-center -mt-6 relative">
+                    <button onclick="openAddExpenseModal()" class="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg btn-plus-glow hover:scale-105 active:scale-95 transition-all">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+
+                <button onclick="switchTab('installments')" id="nav-installments" class="nav-btn flex flex-col items-center py-1 text-slate-400 hover:text-slate-200 font-medium text-[11px] transition-colors">
+                    <i class="fa-solid fa-layer-group text-lg mb-1"></i>
+                    <span>Cuotas</span>
+                </button>
+
+                <button onclick="switchTab('more')" id="nav-more" class="nav-btn flex flex-col items-center py-1 text-slate-400 hover:text-slate-200 font-medium text-[11px] transition-colors">
+                    <i class="fa-solid fa-ellipsis text-lg mb-1"></i>
+                    <span>Más</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- MODAL: AGREGAR / EDITAR TARJETA -->
+        <div id="card-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-5 animate-in slide-in-from-bottom duration-200">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 id="modal-title" class="text-lg font-bold text-white">Agregar Nueva Tarjeta</h3>
+                    <button onclick="closeCardModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <form id="card-form" onsubmit="handleSaveCard(event)" class="space-y-4">
+                    <input type="hidden" id="card-id">
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nombre de la Tarjeta</label>
+                        <input type="text" id="card-name" required placeholder="Ej: Galicia Visa Signature" class="app-input">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Banco / Emisor</label>
+                            <input type="text" id="card-bank" placeholder="Ej: Galicia, BBVA" class="app-input">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Marca / Red</label>
+                            <div class="custom-select-wrapper">
+                                <select id="card-type" class="app-input pr-8">
+                                    <option value="visa">Visa</option>
+                                    <option value="mastercard">Mastercard</option>
+                                    <option value="amex">American Express</option>
+                                    <option value="cabal">Cabal</option>
+                                    <option value="naranja">Naranja X</option>
+                                    <option value="other">Otra</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Límite Total de Crédito ($)</label>
+                        <input type="number" id="card-limit" required min="1" step="any" placeholder="Ej: 1500000" class="app-input">
+                    </div>
+
+                    <div class="pt-3 flex gap-3">
+                        <button type="button" onclick="closeCardModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: REGISTRAR COMPRA (+) -->
+        <div id="expense-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cart-plus text-indigo-400"></i> Registrar Compra
+                    </h3>
+                    <button onclick="closeAddExpenseModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                
+                <form id="expense-form" onsubmit="handleAddExpense(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Seleccionar Tarjeta</label>
+                        <div class="custom-select-wrapper">
+                            <select id="expense-card-id" class="app-input pr-8"></select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Monto Total</label>
+                            <input type="number" id="expense-amount" required step="any" min="0.01" placeholder="Ej: 25000" class="app-input">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Moneda</label>
+                            <div class="custom-select-wrapper">
+                                <select id="expense-currency" class="app-input pr-7">
+                                    <option value="ARS">ARS ($)</option>
+                                    <option value="USD">USD (US$)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Descripción / Comercio</label>
+                            <input type="text" id="expense-title" required placeholder="Ej: Coto, YPF, Spotify" class="app-input">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Fecha de Compra</label>
+                            <input type="date" id="expense-date" required class="app-input">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Categoría</label>
+                        <div class="custom-select-wrapper">
+                            <select id="expense-category" class="app-input pr-8">
+                                <option value="Alimentación">Alimentación</option>
+                                <option value="Auto / Transporte">Auto / Transporte</option>
+                                <option value="Hogar">Hogar</option>
+                                <option value="Tecnología">Tecnología</option>
+                                <option value="Salud">Salud</option>
+                                <option value="Entretenimiento">Entretenimiento</option>
+                                <option value="Servicios">Servicios</option>
+                                <option value="Ropa">Ropa</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Plan de Cuotas</label>
+                        <div class="custom-select-wrapper">
+                            <select id="expense-installments" class="app-input pr-8">
+                                <option value="1">1 cuota (Contado)</option>
+                                <option value="2">2 cuotas</option>
+                                <option value="3">3 cuotas</option>
+                                <option value="6">6 cuotas</option>
+                                <option value="9">9 cuotas</option>
+                                <option value="12">12 cuotas</option>
+                                <option value="18">18 cuotas</option>
+                                <option value="24">24 cuotas</option>
+                                <option value="48">48 cuotas</option>
+                                <option value="72">72 cuotas</option>
+                                <option value="sub">Suscripción mensual</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 flex gap-3">
+                        <button type="button" onclick="closeAddExpenseModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">Cancelar</button>
+                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">Guardar Compra</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: INICIAR SESIÓN / REGISTRO -->
+        <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 id="auth-modal-title" class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-user-lock text-indigo-400"></i> Iniciar Sesión
+                    </h3>
+                    <button onclick="closeLoginModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Correo Electrónico</label>
+                        <input type="email" id="auth-email" required autocomplete="email" placeholder="tuemail@ejemplo.com" class="app-input">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Contraseña</label>
+                        <input type="password" id="auth-password" required minlength="8" autocomplete="current-password" placeholder="Al menos 8 caracteres" class="app-input">
+                    </div>
+
+                    <p id="auth-message" class="hidden text-xs text-slate-300" role="status" aria-live="polite"></p>
+
+                    <div class="pt-2 flex gap-3">
+                        <button type="button" onclick="closeLoginModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">Cancelar</button>
+                        <button type="submit" id="auth-submit-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">Ingresar</button>
+                    </div>
+                    <button type="button" id="auth-mode-toggle" onclick="toggleAuthMode()" class="w-full text-xs font-semibold text-indigo-300 hover:text-indigo-200">¿No tenés cuenta? Crear una</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: CONFIRMACIÓN BORRAR DATOS -->
+        <div id="reset-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 space-y-4 text-center">
+                <div class="w-14 h-14 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-500/20">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">¿Borrar todos los datos?</h3>
+                    <p class="text-xs text-slate-400 mt-1">Esta acción eliminará todas las tarjetas y consumos registrados de forma permanente.</p>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeResetModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">Cancelar</button>
+                    <button onclick="confirmResetData()" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-2.5 rounded-xl text-xs font-semibold shadow-lg shadow-rose-600/30">Sí, Borrar Todo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTIFICACIÓN TOAST -->
+        <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-4 py-2.5 rounded-2xl border border-slate-700 shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-indigo-400"></i>
+            <span id="toast-msg">Mensaje</span>
+        </div>
+
+    </div>
+
+    <!-- Supabase Auth y base de datos -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <!-- LÓGICA JAVASCRIPT -->
+    <script>
+        // Estado General
+        let currentUser = null;
+        let supabaseClient = null;
+        let authMode = 'signin';
+        let isDarkMode = true;
+        let cards = [];
+        let expenses = [];
+
+        let activeCardIndex = 0;
+        let categoryChartInstance = null;
+        let projectionChartInstance = null;
+        let isMovementsOpen = false;
+        let isActivePlansOpen = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHome();
+            setupCarouselScroll();
+            fetchDollarRates();
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('expense-date').value = today;
+            initializeCloudAccount();
+        });
+
+        // Toggle Tema
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            const statusText = document.getElementById('theme-status-text');
+
+            if (isDarkMode) {
+                html.classList.add('dark');
+                html.classList.remove('light');
+                icon.className = 'fa-solid fa-moon';
+                statusText.textContent = 'Modo Oscuro activo';
+            } else {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                icon.className = 'fa-solid fa-sun';
+                statusText.textContent = 'Modo Claro activo';
+            }
+            showToast(`Cambiaste a ${isDarkMode ? 'Modo Oscuro' : 'Modo Claro'}`);
+        }
+
+        // Fetch Cotizaciones Dólar
+        async function fetchDollarRates() {
+            const container = document.getElementById('dollar-rates-container');
+            container.innerHTML = `
+                <div class="col-span-2 text-center py-4 text-xs text-slate-500">
+                    <i class="fa-solid fa-spinner fa-spin text-base text-indigo-400 mb-1"></i>
+                    <p>Cargando cotizaciones...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('https://dolarapi.com/v1/dolares');
+                if (!response.ok) throw new Error('API Error');
+                const data = await response.json();
+
+                container.innerHTML = '';
+                
+                // Tipos a mostrar
+                const filterTypes = ['oficial', 'blue', 'bolsa', 'contadoconliqui', 'tarjeta'];
+
+                data.filter(item => filterTypes.includes(item.casa)).forEach(item => {
+                    let title = escapeHtml(item.nombre);
+                    let badgeColor = 'bg-slate-800 text-slate-300';
+                    if (item.casa === 'blue') badgeColor = 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+                    if (item.casa === 'tarjeta') badgeColor = 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+                    if (item.casa === 'oficial') badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+
+                    const card = document.createElement('div');
+                    card.className = 'bg-slate-900/60 p-3 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-1.5';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span class="text-[11px] font-bold text-white">${title}</span>
+                            <span class="text-[9px] border px-1.5 py-0.2 rounded-md font-medium ${badgeColor}">USD</span>
+                        </div>
+                        <div class="flex justify-between items-end pt-1">
+                            <div>
+                                <p class="text-[9px] text-slate-400">Compra</p>
+                        <p class="text-xs font-semibold text-slate-300">$${escapeHtml(item.compra || '-')}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] text-slate-400">Venta</p>
+                        <p class="text-sm font-extrabold text-emerald-400">$${escapeHtml(item.venta || '-')}</p>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-3 text-xs text-rose-400">
+                        <i class="fa-solid fa-circle-exclamation mb-1 text-base"></i>
+                        <p>No se pudieron actualizar las cotizaciones hoy.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Cuenta real y sincronización privada por usuario
+        function initializeCloudAccount() {
+            const settings = window.APP_CONFIG || {};
+            if (!settings.supabaseUrl || !settings.supabasePublishableKey ||
+                settings.supabaseUrl.includes('TU_PROYECTO') || settings.supabasePublishableKey.includes('TU_CLAVE')) {
+                document.getElementById('profile-status-text').textContent = 'Falta conectar la base de datos';
+                return;
+            }
+            if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                document.getElementById('profile-status-text').textContent = 'No se pudo cargar el servicio de cuentas';
+                return;
+            }
+
+            supabaseClient = window.supabase.createClient(settings.supabaseUrl, settings.supabasePublishableKey);
+            supabaseClient.auth.onAuthStateChange((event, session) => {
+                window.setTimeout(() => {
+                    if (session?.user) updateSignedInUser(session.user, false);
+                    else clearSignedInUser();
+                }, 0);
+            });
+
+            supabaseClient.auth.getSession().then(({ data, error }) => {
+                if (error) {
+                    showToast('No se pudo revisar la sesión');
+                    return;
+                }
+                if (data.session?.user) updateSignedInUser(data.session.user, false);
+            });
+        }
+
+        function openLoginModal() {
+            if (currentUser) {
+                switchTab('more');
+                return;
+            }
+            setAuthMode('signin');
+            document.getElementById('auth-message').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function setAuthMode(mode) {
+            authMode = mode;
+            const signingUp = mode === 'signup';
+            document.getElementById('auth-modal-title').innerHTML = signingUp
+                ? '<i class="fa-solid fa-user-plus text-indigo-400"></i> Crear cuenta'
+                : '<i class="fa-solid fa-user-lock text-indigo-400"></i> Iniciar Sesión';
+            document.getElementById('auth-submit-btn').textContent = signingUp ? 'Crear cuenta' : 'Ingresar';
+            document.getElementById('auth-mode-toggle').textContent = signingUp
+                ? '¿Ya tenés cuenta? Iniciar sesión'
+                : '¿No tenés cuenta? Crear una';
+            document.getElementById('auth-password').setAttribute('autocomplete', signingUp ? 'new-password' : 'current-password');
+            document.getElementById('auth-message').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
+        }
+
+        function showAuthMessage(message, isError = false) {
+            const element = document.getElementById('auth-message');
+            element.textContent = message;
+            element.classList.remove('hidden', 'text-rose-400', 'text-emerald-400', 'text-slate-300');
+            element.classList.add(isError ? 'text-rose-400' : 'text-slate-300');
+        }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            if (!supabaseClient) {
+                showAuthMessage('La app todavía no está conectada a su servicio de cuentas.');
+                return;
+            }
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const button = document.getElementById('auth-submit-btn');
+            button.disabled = true;
+
+            try {
+                if (authMode === 'signup') {
+                    const { data, error } = await supabaseClient.auth.signUp({
+                        email,
+                        password,
+                        options: { emailRedirectTo: window.location.href.split('#')[0] }
+                    });
+                    if (error) throw error;
+                    if (data.session?.user) {
+                        closeLoginModal();
+                        await updateSignedInUser(data.session.user, true);
+                    } else {
+                        showAuthMessage('Te enviamos un correo para confirmar la cuenta. Después de confirmarla, volvé a iniciar sesión.');
+                    }
+                } else {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                    if (error) throw error;
+                    closeLoginModal();
+                    await updateSignedInUser(data.user, true);
+                }
+            } catch (error) {
+                showAuthMessage(error.message || 'No se pudo completar el acceso. Revisá los datos e intentá de nuevo.', true);
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function updateSignedInUser(user, showWelcome) {
+            if (!user || !supabaseClient) return;
+            const isNewUser = !currentUser || currentUser.id !== user.id;
+            currentUser = { id: user.id, email: user.email || '' };
+            const displayName = currentUser.email.split('@')[0] || 'Usuario';
+            document.getElementById('user-greeting').innerHTML = `¡Hola, ${displayName}! <span class="text-xl">👋</span>`;
+            document.getElementById('profile-email-text').textContent = currentUser.email;
+            document.getElementById('profile-status-text').textContent = 'Tus registros se sincronizan con tu cuenta';
+
+            const actionBtn = document.getElementById('profile-action-btn');
+            actionBtn.textContent = 'Cerrar Sesión';
+            actionBtn.className = 'bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-xs px-3.5 py-2 rounded-xl font-medium transition-all';
+            actionBtn.onclick = handleLogout;
+
+            if (isNewUser || showWelcome) await loadCloudData();
+            if (showWelcome) showToast('Sesión iniciada');
+        }
+
+        async function loadCloudData() {
+            if (!currentUser || !supabaseClient) return;
+            const { data, error } = await supabaseClient
+                .from('app_data')
+                .select('cards, expenses')
+                .eq('user_id', currentUser.id)
+                .maybeSingle();
+            if (error) {
+                showToast('No se pudieron cargar tus datos guardados');
+                console.error(error);
+                return;
+            }
+
+            cards = data?.cards || [];
+            expenses = data?.expenses || [];
+            if (!data) await saveCloudData();
+            renderHome();
+            renderCardsScreen();
+            renderInstallmentsScreen();
+        }
+
+        async function saveCloudData() {
+            if (!currentUser || !supabaseClient) return false;
+            const { error } = await supabaseClient.from('app_data').upsert({
+                user_id: currentUser.id,
+                cards,
+                expenses,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id' });
+            if (error) {
+                showToast('No se pudieron guardar los cambios. Revisá la conexión.');
+                console.error(error);
+                return false;
+            }
+            return true;
+        }
+
+        async function handleLogout() {
+            if (supabaseClient) {
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) {
+                    showToast('No se pudo cerrar la sesión');
+                    return;
+                }
+            }
+            clearSignedInUser();
+            showToast('Sesión cerrada');
+        }
+
+        function clearSignedInUser() {
+            currentUser = null;
+            cards = [];
+            expenses = [];
+            document.getElementById('user-greeting').innerHTML = `¡Hola! <span class="text-xl">👋</span>`;
+            document.getElementById('profile-email-text').textContent = 'Sin sesión iniciada';
+            document.getElementById('profile-status-text').textContent = supabaseClient
+                ? 'Iniciá sesión para sincronizar tus datos'
+                : 'Falta conectar la base de datos';
+
+            const actionBtn = document.getElementById('profile-action-btn');
+            actionBtn.textContent = 'Iniciar Sesión';
+            actionBtn.className = 'bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md';
+            actionBtn.onclick = openLoginModal;
+            renderHome();
+            renderCardsScreen();
+            renderInstallmentsScreen();
+        }
+
+        // Borrado de Datos
+        function openResetModal() {
+            document.getElementById('reset-modal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-modal').classList.add('hidden');
+        }
+
+        async function confirmResetData() {
+            const previousCards = cards;
+            const previousExpenses = expenses;
+            cards = [];
+            expenses = [];
+            const saved = await saveCloudData();
+            if (!saved) {
+                cards = previousCards;
+                expenses = previousExpenses;
+                renderHome();
+                renderCardsScreen();
+                renderInstallmentsScreen();
+                return;
+            }
+            closeResetModal();
+            renderHome();
+            renderCardsScreen();
+            renderInstallmentsScreen();
+            showToast('Todos los datos fueron borrados');
+        }
+
+        function formatMoney(amount, currency = 'ARS') {
+            if (currency === 'USD') {
+                return 'US$ ' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            return '$ ' + Number(amount).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[character]));
+        }
+
+        // Render Pantalla Inicio
+        function renderHome() {
+            const cardsContainer = document.getElementById('cards-container');
+            const cardCountBadge = document.getElementById('card-count-badge');
+            
+            let totalDebtARS = 0;
+            let totalDebtUSD = 0;
+            let totalLimitARS = 0;
+
+            cardsContainer.innerHTML = '';
+            cardCountBadge.textContent = cards.length;
+
+            if (cards.length === 0) {
+                cardsContainer.innerHTML = `
+                    <div class="glass-panel p-6 text-center rounded-2xl border border-dashed border-slate-800 space-y-2">
+                        <i class="fa-regular fa-credit-card text-3xl text-slate-600"></i>
+                        <p class="text-sm font-medium text-slate-400">No tenés tarjetas registradas</p>
+                        <p class="text-xs text-slate-500">Tocá en "+ Agregar tarjeta" para comenzar.</p>
+                    </div>
+                `;
+            } else {
+                cards.forEach(card => {
+                    totalDebtARS += Number(card.debtARS);
+                    totalDebtUSD += Number(card.debtUSD);
+                    totalLimitARS += Number(card.limit);
+
+                    const usedPercentage = card.limit > 0 ? Math.min(Math.round((card.debtARS / card.limit) * 100), 100) : 0;
+                    const availableARS = Math.max(card.limit - card.debtARS, 0);
+
+                    let barColorClass = 'bg-emerald-500';
+                    let textColorClass = 'text-emerald-400';
+                    if (usedPercentage > 85) {
+                        barColorClass = 'bg-rose-500';
+                        textColorClass = 'text-rose-400';
+                    } else if (usedPercentage > 60) {
+                        barColorClass = 'bg-amber-500';
+                        textColorClass = 'text-amber-400';
+                    }
+
+                    let iconClass = 'fa-credit-card';
+                    if (card.type === 'visa') iconClass = 'fa-cc-visa text-blue-400';
+                    else if (card.type === 'mastercard') iconClass = 'fa-cc-mastercard text-orange-400';
+                    else if (card.type === 'amex') iconClass = 'fa-cc-amex text-emerald-400';
+
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'glass-panel p-4 rounded-2xl space-y-3 relative group transition-all hover:border-slate-700/80';
+                    cardElement.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-xl">
+                                    <i class="fa-brands ${iconClass}"></i>
+                                </div>
+                                <div>
+                    <h3 class="font-bold text-white text-sm leading-tight">${escapeHtml(card.name)}</h3>
+                    <p class="text-xs text-slate-400">${escapeHtml(card.bank || 'Tarjeta')}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-1 bg-slate-900/60 p-1 rounded-xl border border-slate-800">
+                                <button onclick="openCardModal('${escapeHtml(card.id)}')" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-indigo-400 text-xs transition-colors">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button onclick="deleteCard('${escapeHtml(card.id)}')" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-400 text-xs transition-colors">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                            <div>
+                                <span class="text-slate-400">Límite Total</span>
+                                <p class="font-semibold text-slate-200 mt-0.5">${formatMoney(card.limit)}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-slate-400">Disponible</span>
+                                <p class="font-semibold text-emerald-400 mt-0.5">${formatMoney(availableARS)}</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1 pt-1">
+                            <div class="flex justify-between items-center text-[11px]">
+                                <span class="text-slate-400">Uso del límite</span>
+                                <span class="font-bold ${textColorClass}">${usedPercentage}%</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                <div class="${barColorClass} h-2 rounded-full transition-all duration-500" style="width: ${usedPercentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+
+                    cardsContainer.appendChild(cardElement);
+                });
+            }
+
+            const totalAvailableARS = Math.max(totalLimitARS - totalDebtARS, 0);
+
+            document.getElementById('total-debt-ars').textContent = formatMoney(totalDebtARS);
+            document.getElementById('total-debt-usd').textContent = formatMoney(totalDebtUSD, 'USD');
+            document.getElementById('total-limit-ars').textContent = formatMoney(totalLimitARS);
+            document.getElementById('total-available-ars').textContent = formatMoney(totalAvailableARS);
+        }
+
+        // Render Tarjetas (Estilo Galicia)
+        function renderCardsScreen() {
+            const carousel = document.getElementById('cards-carousel');
+            const dotsContainer = document.getElementById('carousel-dots');
+            
+            carousel.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            if (cards.length === 0) {
+                carousel.innerHTML = `
+                    <div class="w-full glass-panel p-8 text-center rounded-3xl text-slate-400">
+                        <p class="text-sm">Agregá tu primera tarjeta para ver sus movimientos.</p>
+                    </div>
+                `;
+                renderCardMovements(null);
+                return;
+            }
+
+            if (activeCardIndex >= cards.length) activeCardIndex = 0;
+
+            cards.forEach((card, index) => {
+                let gradClass = 'card-grad-visa';
+                if (card.type === 'mastercard') gradClass = 'card-grad-master';
+                else if (card.type === 'amex') gradClass = 'card-grad-amex';
+
+                let brandIcon = 'fa-cc-visa';
+                if (card.type === 'mastercard') brandIcon = 'fa-cc-mastercard';
+                else if (card.type === 'amex') brandIcon = 'fa-cc-amex';
+
+                const availableARS = Math.max(card.limit - card.debtARS, 0);
+
+                const cardCard = document.createElement('div');
+                cardCard.className = `card-carousel-item min-w-[88%] sm:min-w-[320px] p-5 rounded-3xl ${gradClass} shadow-2xl text-white flex flex-col justify-between h-44 border border-white/10 relative overflow-hidden transition-all transform cursor-pointer`;
+                cardCard.onclick = () => selectCardIndex(index);
+                cardCard.innerHTML = `
+                    <div class="flex justify-between items-center z-10">
+                        <span class="text-xs font-bold uppercase tracking-wider text-white/90">${escapeHtml(card.bank || 'Tarjeta')}</span>
+                        <i class="fa-brands ${brandIcon} text-2xl text-white/90"></i>
+                    </div>
+
+                    <div class="z-10 my-1">
+                        <p class="text-sm font-bold text-white/90">${escapeHtml(card.name)}</p>
+                    </div>
+
+                    <div class="flex justify-between items-end z-10 pt-2 border-t border-white/10">
+                        <div>
+                            <p class="text-[10px] text-white/70 uppercase">Límite Disponible</p>
+                            <p class="text-base font-bold text-white">${formatMoney(availableARS)}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-white/70 uppercase">Titular</p>
+                        <p class="text-xs font-semibold text-white/90">${escapeHtml(currentUser ? currentUser.email.split('@')[0].toUpperCase() : 'TITULAR')}</p>
+                        </div>
+                    </div>
+                `;
+
+                carousel.appendChild(cardCard);
+
+                const dot = document.createElement('button');
+                dot.className = `w-2 h-2 rounded-full transition-all ${index === activeCardIndex ? 'bg-indigo-500 w-5' : 'bg-slate-700'}`;
+                dot.onclick = () => selectCardIndex(index);
+                dotsContainer.appendChild(dot);
+            });
+
+            renderCardMovements(cards[activeCardIndex]);
+        }
+
+        function selectCardIndex(index) {
+            activeCardIndex = index;
+            const carousel = document.getElementById('cards-carousel');
+            const cardWidth = carousel.children[0]?.offsetWidth || 300;
+            carousel.scrollTo({ left: index * (cardWidth + 16), behavior: 'smooth' });
+            
+            const dots = document.getElementById('carousel-dots').children;
+            Array.from(dots).forEach((dot, idx) => {
+                dot.className = `w-2 h-2 rounded-full transition-all ${idx === activeCardIndex ? 'bg-indigo-500 w-5' : 'bg-slate-700'}`;
+            });
+
+            renderCardMovements(cards[activeCardIndex]);
+        }
+
+        function setupCarouselScroll() {
+            const carousel = document.getElementById('cards-carousel');
+            carousel.addEventListener('scroll', () => {
+                const cardWidth = carousel.children[0]?.offsetWidth || 300;
+                const newIndex = Math.round(carousel.scrollLeft / (cardWidth + 16));
+                if (newIndex !== activeCardIndex && newIndex >= 0 && newIndex < cards.length) {
+                    activeCardIndex = newIndex;
+                    const dots = document.getElementById('carousel-dots').children;
+                    Array.from(dots).forEach((dot, idx) => {
+                        dot.className = `w-2 h-2 rounded-full transition-all ${idx === activeCardIndex ? 'bg-indigo-500 w-5' : 'bg-slate-700'}`;
+                    });
+                    renderCardMovements(cards[activeCardIndex]);
+                }
+            });
+        }
+
+        function toggleMovementsAccordion() {
+            isMovementsOpen = !isMovementsOpen;
+            const content = document.getElementById('movements-accordion-content');
+            const chevron = document.getElementById('movements-chevron');
+            if (isMovementsOpen) {
+                content.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        function renderCardMovements(card) {
+            const activeLabel = document.getElementById('active-card-name-label');
+            const totalARS = document.getElementById('card-month-total-ars');
+            const totalUSD = document.getElementById('card-month-total-usd');
+            const movementsList = document.getElementById('card-movements-list');
+            const countLabel = document.getElementById('movements-count');
+
+            if (!card) {
+                activeLabel.textContent = 'Sin tarjeta';
+                totalARS.textContent = '$ 0';
+                totalUSD.textContent = 'US$ 0,00';
+                movementsList.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No hay consumos registrados</p>';
+                countLabel.textContent = '0 consumos';
+                renderCategoryChart([]);
+                return;
+            }
+
+            activeLabel.textContent = card.name;
+            const cardExpenses = expenses.filter(e => e.cardId === card.id);
+            countLabel.textContent = `${cardExpenses.length} consumos`;
+
+            let sumARS = 0;
+            let sumUSD = 0;
+
+            movementsList.innerHTML = '';
+
+            if (cardExpenses.length === 0) {
+                movementsList.innerHTML = `
+                    <div class="glass-panel p-5 text-center rounded-2xl border border-dashed border-slate-800">
+                        <i class="fa-solid fa-receipt text-2xl text-slate-600 mb-1"></i>
+                        <p class="text-xs text-slate-400 font-medium">Esta tarjeta no tiene movimientos registrados</p>
+                    </div>
+                `;
+            } else {
+                cardExpenses.forEach(exp => {
+                    if (exp.currency === 'USD') sumUSD += exp.amount;
+                    else sumARS += exp.amount;
+
+                    let catIcon = 'fa-bag-shopping';
+                    if (exp.category === 'Alimentación') catIcon = 'fa-utensils';
+                    else if (exp.category === 'Auto / Transporte') catIcon = 'fa-car';
+                    else if (exp.category === 'Hogar') catIcon = 'fa-house';
+                    else if (exp.category === 'Tecnología') catIcon = 'fa-laptop';
+
+                    const item = document.createElement('div');
+                    item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center transition-all hover:border-slate-700/80';
+                    item.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-indigo-400 text-sm">
+                                <i class="fa-solid ${catIcon}"></i>
+                            </div>
+                            <div>
+                            <h4 class="text-xs font-bold text-white">${escapeHtml(exp.title)}</h4>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="text-[10px] text-slate-400">${escapeHtml(exp.category)}</span>
+                                    <span class="text-[9px] bg-slate-800 text-indigo-300 px-1.5 py-0.2 rounded-md border border-slate-700">
+                                        ${exp.installments === 'sub' ? 'Suscripción' : exp.installments === '1' ? 'Contado' : exp.installments + ' cuotas'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right flex items-center gap-2">
+                            <div>
+                                <p class="text-xs font-bold ${exp.currency === 'USD' ? 'text-emerald-400' : 'text-white'}">
+                                    ${formatMoney(exp.amount, exp.currency)}
+                                </p>
+                            </div>
+                            <button onclick="deleteExpense('${escapeHtml(exp.id)}')" class="w-6 h-6 text-slate-500 hover:text-rose-400 transition-colors ml-1">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                    movementsList.appendChild(item);
+                });
+            }
+
+            totalARS.textContent = formatMoney(sumARS, 'ARS');
+            totalUSD.textContent = formatMoney(sumUSD, 'USD');
+
+            renderCategoryChart(cardExpenses);
+        }
+
+        function renderCategoryChart(cardExpenses) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            const emptyMsg = document.getElementById('chart-empty-msg');
+
+            if (categoryChartInstance) categoryChartInstance.destroy();
+
+            if (!cardExpenses || cardExpenses.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                return;
+            } else {
+                emptyMsg.classList.add('hidden');
+            }
+
+            const totalsByCategory = {};
+            cardExpenses.forEach(e => {
+                const cat = e.category || 'Varios';
+                totalsByCategory[cat] = (totalsByCategory[cat] || 0) + e.amount;
+            });
+
+            const labels = Object.keys(totalsByCategory);
+            const data = Object.values(totalsByCategory);
+            const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#8b5cf6'];
+
+            categoryChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{ data: data, backgroundColor: colors.slice(0, labels.length), borderWidth: 0 }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10, family: 'Inter' }, boxWidth: 10 } }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // Render Cuotas
+        function toggleActivePlansAccordion() {
+            isActivePlansOpen = !isActivePlansOpen;
+            const content = document.getElementById('active-plans-accordion-content');
+            const chevron = document.getElementById('active-plans-chevron');
+            if (isActivePlansOpen) {
+                content.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        function renderInstallmentsScreen() {
+            const monthARS = document.getElementById('installments-month-ars');
+            const monthUSD = document.getElementById('installments-month-usd');
+            const plansList = document.getElementById('active-plans-list');
+            const countLabel = document.getElementById('active-plans-count');
+
+            let totalInstallmentARS = 0;
+            let totalInstallmentUSD = 0;
+
+            const installmentExpenses = expenses.filter(e => e.installments !== '1');
+            countLabel.textContent = `${installmentExpenses.length} planes`;
+
+            plansList.innerHTML = '';
+
+            if (installmentExpenses.length === 0) {
+                plansList.innerHTML = `
+                    <div class="glass-panel p-5 text-center rounded-2xl border border-dashed border-slate-800">
+                        <i class="fa-solid fa-layer-group text-2xl text-slate-600 mb-1"></i>
+                        <p class="text-xs text-slate-400 font-medium">No tenés compras financiadas o en cuotas</p>
+                    </div>
+                `;
+            } else {
+                installmentExpenses.forEach(exp => {
+                    const card = cards.find(c => c.id === exp.cardId);
+                    const isSub = exp.installments === 'sub';
+                    const installmentCount = isSub ? 1 : parseInt(exp.installments);
+                    const monthlyValue = exp.amount / installmentCount;
+
+                    if (exp.currency === 'USD') totalInstallmentUSD += monthlyValue;
+                    else totalInstallmentARS += monthlyValue;
+
+                    const item = document.createElement('div');
+                    item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center transition-all hover:border-slate-700/80';
+                    item.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm">
+                                <i class="fa-solid fa-calendar-day"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">${escapeHtml(exp.title)}</h4>
+                                <p class="text-[10px] text-slate-400">${card ? card.name : 'Tarjeta'} • ${isSub ? 'Suscripción Mensual' : exp.installments + ' cuotas'}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold ${exp.currency === 'USD' ? 'text-emerald-400' : 'text-white'}">
+                                ${formatMoney(monthlyValue, exp.currency)} / mes
+                            </p>
+                        </div>
+                    `;
+                    plansList.appendChild(item);
+                });
+            }
+
+            monthARS.textContent = formatMoney(totalInstallmentARS, 'ARS');
+            monthUSD.textContent = formatMoney(totalInstallmentUSD, 'USD');
+
+            renderProjectionChart();
+        }
+
+        function renderProjectionChart() {
+            const ctx = document.getElementById('projectionChart').getContext('2d');
+            if (projectionChartInstance) projectionChartInstance.destroy();
+
+            const months = ['Este mes', 'Mes +1', 'Mes +2', 'Mes +3', 'Mes +4', 'Mes +5'];
+            const dataProj = [120000, 110000, 95000, 70000, 45000, 20000];
+
+            projectionChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Cuotas Est. ($)',
+                        data: dataProj,
+                        backgroundColor: '#6366f1',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+        }
+
+        // Navegación
+        function switchTab(tab) {
+            ['home', 'cards', 'installments', 'more'].forEach(t => {
+                const screen = document.getElementById(`screen-${t}`);
+                const btn = document.getElementById(`nav-${t}`);
+                if (screen) screen.classList.add('hidden');
+                if (btn) {
+                    btn.classList.remove('text-indigo-400');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+
+            const selectedScreen = document.getElementById(`screen-${tab}`);
+            const selectedBtn = document.getElementById(`nav-${tab}`);
+            if (selectedScreen) selectedScreen.classList.remove('hidden');
+            if (selectedBtn) {
+                selectedBtn.classList.remove('text-slate-400');
+                selectedBtn.classList.add('text-indigo-400');
+            }
+
+            if (tab === 'cards') renderCardsScreen();
+            else if (tab === 'home') renderHome();
+            else if (tab === 'installments') renderInstallmentsScreen();
+        }
+
+        // Modales Tarjeta y Gastos
+        function openCardModal(cardId = null) {
+            if (!currentUser) {
+                openLoginModal();
+                showToast('Iniciá sesión para guardar tus tarjetas');
+                return;
+            }
+            const modal = document.getElementById('card-modal');
+            const form = document.getElementById('card-form');
+            const modalTitle = document.getElementById('modal-title');
+
+            form.reset();
+
+            if (cardId) {
+                const card = cards.find(c => c.id === cardId);
+                if (card) {
+                    modalTitle.textContent = 'Editar Tarjeta';
+                    document.getElementById('card-id').value = card.id;
+                    document.getElementById('card-name').value = card.name;
+                    document.getElementById('card-bank').value = card.bank || '';
+                    document.getElementById('card-type').value = card.type || 'visa';
+                    document.getElementById('card-limit').value = card.limit;
+                }
+            } else {
+                modalTitle.textContent = 'Agregar Nueva Tarjeta';
+                document.getElementById('card-id').value = '';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeCardModal() {
+            document.getElementById('card-modal').classList.add('hidden');
+        }
+
+        async function handleSaveCard(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const previousCards = cards;
+            const id = document.getElementById('card-id').value;
+            const name = document.getElementById('card-name').value;
+            const bank = document.getElementById('card-bank').value;
+            const type = document.getElementById('card-type').value;
+            const limit = parseFloat(document.getElementById('card-limit').value) || 0;
+
+            if (id) {
+                cards = cards.map(c => c.id === id ? { ...c, name, bank, type, limit } : c);
+            } else {
+                cards.push({ id: crypto.randomUUID(), name, bank, type, limit, debtARS: 0, debtUSD: 0 });
+            }
+
+            const saved = await saveCloudData();
+            if (!saved) {
+                cards = previousCards;
+                renderHome();
+                renderCardsScreen();
+                return;
+            }
+            closeCardModal();
+            renderHome();
+            renderCardsScreen();
+            showToast(id ? 'Tarjeta actualizada' : 'Tarjeta agregada');
+        }
+
+        async function deleteCard(id) {
+            if (!currentUser) return;
+            const previousCards = cards;
+            const previousExpenses = expenses;
+            cards = cards.filter(c => c.id !== id);
+            expenses = expenses.filter(e => e.cardId !== id);
+            const saved = await saveCloudData();
+            if (!saved) {
+                cards = previousCards;
+                expenses = previousExpenses;
+                renderHome();
+                renderCardsScreen();
+                return;
+            }
+            renderHome();
+            renderCardsScreen();
+            showToast('Tarjeta eliminada');
+        }
+
+        function openAddExpenseModal() {
+            if (cards.length === 0) {
+                showToast('Primero debes agregar una tarjeta');
+                openCardModal();
+                return;
+            }
+
+            const expenseForm = document.getElementById('expense-form');
+            if (expenseForm) expenseForm.reset();
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('expense-date').value = today;
+
+            const select = document.getElementById('expense-card-id');
+            select.innerHTML = cards.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join('');
+            document.getElementById('expense-modal').classList.remove('hidden');
+        }
+
+        function closeAddExpenseModal() {
+            document.getElementById('expense-modal').classList.add('hidden');
+        }
+
+        async function handleAddExpense(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const previousCards = cards;
+            const previousExpenses = expenses;
+            const cardId = document.getElementById('expense-card-id').value;
+            const amount = parseFloat(document.getElementById('expense-amount').value) || 0;
+            const currency = document.getElementById('expense-currency').value;
+            const title = document.getElementById('expense-title').value;
+            const rawDate = document.getElementById('expense-date').value;
+            const category = document.getElementById('expense-category').value;
+            const installments = document.getElementById('expense-installments').value;
+
+            cards = cards.map(c => {
+                if (c.id === cardId) {
+                    if (currency === 'USD') return { ...c, debtUSD: c.debtUSD + amount };
+                    else return { ...c, debtARS: c.debtARS + amount };
+                }
+                return c;
+            });
+
+            expenses.unshift({ id: crypto.randomUUID(), cardId, amount, currency, title, category, installments, date: rawDate });
+
+            const saved = await saveCloudData();
+            if (!saved) {
+                cards = previousCards;
+                expenses = previousExpenses;
+                renderHome();
+                renderCardsScreen();
+                renderInstallmentsScreen();
+                return;
+            }
+            closeAddExpenseModal();
+            renderHome();
+            renderCardsScreen();
+            renderInstallmentsScreen();
+            showToast('Compra registrada');
+        }
+
+        async function deleteExpense(expId) {
+            if (!currentUser) return;
+            const exp = expenses.find(e => e.id === expId);
+            if (!exp) return;
+            const previousCards = cards;
+            const previousExpenses = expenses;
+
+            cards = cards.map(c => {
+                if (c.id === exp.cardId) {
+                    if (exp.currency === 'USD') return { ...c, debtUSD: Math.max(0, c.debtUSD - exp.amount) };
+                    else return { ...c, debtARS: Math.max(0, c.debtARS - exp.amount) };
+                }
+                return c;
+            });
+
+            expenses = expenses.filter(e => e.id !== expId);
+            const saved = await saveCloudData();
+            if (!saved) {
+                cards = previousCards;
+                expenses = previousExpenses;
+                renderHome();
+                renderCardsScreen();
+                renderInstallmentsScreen();
+                return;
+            }
+            renderHome();
+            renderCardsScreen();
+            renderInstallmentsScreen();
+            showToast('Movimiento eliminado');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2200);
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator && window.isSecureContext) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch((error) => console.warn('No se pudo preparar la instalación:', error));
+            });
+        }
+    </script>
+</body>
+</html>
