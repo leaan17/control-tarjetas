@@ -450,13 +450,19 @@
                 <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
                         <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-chart-column text-indigo-400"></i> Proyección de Cuotas (Próximos Meses)
+                            <i class="fa-solid fa-chart-column text-indigo-400"></i> Proyección de Cuotas (12 meses)
                         </h3>
                     </div>
 
-                    <div class="relative w-full h-44">
+                    <div id="projection-chart-container" class="relative w-full h-56">
                         <canvas id="projectionChart"></canvas>
                     </div>
+                    <div id="projection-empty" class="hidden p-5 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/40">
+                        <i class="fa-solid fa-chart-simple text-2xl text-slate-600 mb-2"></i>
+                        <p class="text-xs font-semibold text-slate-300">Todavía no hay cuotas para proyectar</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Las compras en cuotas aparecerán mes a mes acá.</p>
+                    </div>
+                    <p class="text-[10px] leading-relaxed text-slate-500">Estimación: la primera cuota se cuenta en el mes de compra y los importes se dividen en partes iguales.</p>
                 </div>
 
                 <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800">
@@ -1771,12 +1777,11 @@
             const monthUSD = document.getElementById('installments-month-usd');
             const plansList = document.getElementById('active-plans-list');
             const countLabel = document.getElementById('active-plans-count');
-
-            let totalInstallmentARS = 0;
-            let totalInstallmentUSD = 0;
-
-            const installmentExpenses = expenses.filter(e => e.installments !== '1');
-            countLabel.textContent = `${installmentExpenses.length} planes`;
+            const projection = buildInstallmentProjection(12);
+            const installmentExpenses = expenses.filter(exp =>
+                projection.months.some(month => getInstallmentAmountForMonth(exp, month) > 0)
+            );
+            countLabel.textContent = `${installmentExpenses.length} ${installmentExpenses.length === 1 ? 'plan' : 'planes'}`;
 
             plansList.innerHTML = '';
 
@@ -1784,18 +1789,19 @@
                 plansList.innerHTML = `
                     <div class="glass-panel p-5 text-center rounded-2xl border border-dashed border-slate-800">
                         <i class="fa-solid fa-layer-group text-2xl text-slate-600 mb-1"></i>
-                        <p class="text-xs text-slate-400 font-medium">No tenés compras financiadas o en cuotas</p>
+                        <p class="text-xs text-slate-400 font-medium">No tenés cuotas activas o próximas</p>
                     </div>
                 `;
             } else {
                 installmentExpenses.forEach(exp => {
                     const card = cards.find(c => c.id === exp.cardId);
                     const isSub = exp.installments === 'sub';
-                    const installmentCount = isSub ? 1 : parseInt(exp.installments);
-                    const monthlyValue = exp.amount / installmentCount;
-
-                    if (exp.currency === 'USD') totalInstallmentUSD += monthlyValue;
-                    else totalInstallmentARS += monthlyValue;
+                    const firstMonthIndex = projection.months.findIndex(month => getInstallmentAmountForMonth(exp, month) > 0);
+                    const monthlyValue = getInstallmentAmountForMonth(exp, projection.months[firstMonthIndex]);
+                    const planDetail = isSub ? 'Suscripción mensual' : `${exp.installments} cuotas`;
+                    const startsLater = firstMonthIndex > 0
+                        ? ` • Empieza en ${formatProjectionMonth(projection.months[firstMonthIndex])}`
+                        : '';
 
                     const item = document.createElement('div');
                     item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center transition-all hover:border-slate-700/80';
@@ -1806,7 +1812,7 @@
                             </div>
                             <div>
                                 <h4 class="text-xs font-bold text-white">${escapeHtml(exp.title)}</h4>
-                                <p class="text-[10px] text-slate-400">${card ? card.name : 'Tarjeta'} • ${isSub ? 'Suscripción Mensual' : exp.installments + ' cuotas'}</p>
+                                <p class="text-[10px] text-slate-400">${card ? escapeHtml(card.name) : 'Tarjeta'} • ${planDetail}${startsLater}</p>
                             </div>
                         </div>
                         <div class="text-right">
@@ -1819,37 +1825,153 @@
                 });
             }
 
-            monthARS.textContent = formatMoney(totalInstallmentARS, 'ARS');
-            monthUSD.textContent = formatMoney(totalInstallmentUSD, 'USD');
+            monthARS.textContent = formatMoney(projection.ars[0], 'ARS');
+            monthUSD.textContent = formatMoney(projection.usd[0], 'USD');
 
-            renderProjectionChart();
+            renderProjectionChart(projection);
         }
 
-        function renderProjectionChart() {
-            const ctx = document.getElementById('projectionChart').getContext('2d');
-            if (projectionChartInstance) projectionChartInstance.destroy();
+        function buildInstallmentProjection(monthCount) {
+            const now = new Date();
+            const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const months = Array.from({ length: monthCount }, (_, index) =>
+                new Date(currentMonth.getFullYear(), currentMonth.getMonth() + index, 1)
+            );
+            const projection = {
+                months,
+                ars: Array(monthCount).fill(0),
+                usd: Array(monthCount).fill(0)
+            };
 
-            const months = ['Este mes', 'Mes +1', 'Mes +2', 'Mes +3', 'Mes +4', 'Mes +5'];
-            const dataProj = [120000, 110000, 95000, 70000, 45000, 20000];
+            expenses.forEach(expense => {
+                if (String(expense.installments) === '1') return;
+                months.forEach((month, index) => {
+                    const amount = getInstallmentAmountForMonth(expense, month);
+                    if (expense.currency === 'USD') projection.usd[index] += amount;
+                    else projection.ars[index] += amount;
+                });
+            });
 
-            projectionChartInstance = new Chart(ctx, {
+            return projection;
+        }
+
+        function getInstallmentAmountForMonth(expense, month) {
+            const type = String(expense.installments ?? '1');
+            if (type === '1') return 0;
+
+            const purchaseDate = parseLocalISODate(expense.date);
+            if (!purchaseDate) return 0;
+
+            const purchaseMonthIndex = purchaseDate.getFullYear() * 12 + purchaseDate.getMonth();
+            const targetMonthIndex = month.getFullYear() * 12 + month.getMonth();
+            const monthsSincePurchase = targetMonthIndex - purchaseMonthIndex;
+            if (monthsSincePurchase < 0) return 0;
+
+            const amount = Math.max(0, Number(expense.amount) || 0);
+            if (type === 'sub') return amount;
+
+            const installmentCount = Number.parseInt(type, 10);
+            if (!Number.isFinite(installmentCount) || installmentCount <= 1 || monthsSincePurchase >= installmentCount) return 0;
+            return amount / installmentCount;
+        }
+
+        function formatProjectionMonth(date) {
+            const month = new Intl.DateTimeFormat('es-AR', { month: 'short' }).format(date).replace(/\./g, '').trim();
+            return month.charAt(0).toUpperCase() + month.slice(1);
+        }
+
+        function formatCompactMoney(value, currency) {
+            const amount = Number(value) || 0;
+            const prefix = currency === 'USD' ? 'US$' : '$';
+            const absoluteAmount = Math.abs(amount);
+            if (absoluteAmount >= 1000000) return `${prefix}${(amount / 1000000).toFixed(1)} M`;
+            if (absoluteAmount >= 1000) return `${prefix}${(amount / 1000).toFixed(absoluteAmount >= 10000 ? 0 : 1)} mil`;
+            return `${prefix}${Math.round(amount)}`;
+        }
+
+        function renderProjectionChart(projection) {
+            const canvas = document.getElementById('projectionChart');
+            const chartContainer = document.getElementById('projection-chart-container');
+            const emptyState = document.getElementById('projection-empty');
+            if (projectionChartInstance) {
+                projectionChartInstance.destroy();
+                projectionChartInstance = null;
+            }
+
+            const hasForecast = projection.ars.some(amount => amount > 0) || projection.usd.some(amount => amount > 0);
+            if (!hasForecast) {
+                chartContainer.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            chartContainer.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            const labels = projection.months.map((month, index) =>
+                index === 0 ? `${formatProjectionMonth(month)} (este mes)` : formatProjectionMonth(month)
+            );
+            const isLight = document.documentElement.classList.contains('light');
+            const tickColor = isLight ? '#64748b' : '#94a3b8';
+            const gridColor = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.05)';
+
+            projectionChartInstance = new Chart(canvas.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: months,
+                    labels,
                     datasets: [{
-                        label: 'Cuotas Est. ($)',
-                        data: dataProj,
-                        backgroundColor: '#6366f1',
-                        borderRadius: 8
+                        label: 'Pesos ($)',
+                        data: projection.ars,
+                        yAxisID: 'yARS',
+                        backgroundColor: 'rgba(99, 102, 241, 0.82)',
+                        borderColor: '#818cf8',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        maxBarThickness: 14
+                    }, {
+                        label: 'Dólares (US$)',
+                        data: projection.usd,
+                        yAxisID: 'yUSD',
+                        backgroundColor: 'rgba(16, 185, 129, 0.76)',
+                        borderColor: '#34d399',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        maxBarThickness: 14
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            align: 'start',
+                            labels: { color: tickColor, boxWidth: 9, boxHeight: 9, padding: 12, usePointStyle: true, pointStyle: 'rectRounded', font: { size: 9 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${formatMoney(context.parsed.y, context.dataset.yAxisID === 'yUSD' ? 'USD' : 'ARS')}`
+                            }
+                        }
+                    },
                     scales: {
-                        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
-                        y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                        x: { ticks: { color: tickColor, font: { size: 8 }, maxRotation: 0, minRotation: 0, autoSkip: false }, grid: { display: false } },
+                        yARS: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            ticks: { color: '#a5b4fc', font: { size: 8 }, callback: value => formatCompactMoney(value, 'ARS') },
+                            grid: { color: gridColor }
+                        },
+                        yUSD: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            ticks: { color: '#6ee7b7', font: { size: 8 }, callback: value => formatCompactMoney(value, 'USD') },
+                            grid: { drawOnChartArea: false }
+                        }
                     }
                 }
             });
