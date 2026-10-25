@@ -2026,6 +2026,25 @@
             }
         }
 
+        function formatExpenseInstallmentProgress(expense, referenceDate = new Date()) {
+            const installmentType = String(expense.installments ?? '1');
+            if (installmentType === 'sub') return '(suscripción)';
+
+            const totalInstallments = Number.parseInt(installmentType, 10);
+            if (!Number.isFinite(totalInstallments) || totalInstallments < 1) return '(1/1)';
+
+            const purchaseDate = parseLocalISODate(expense.date);
+            if (!purchaseDate) return `(1/${totalInstallments})`;
+
+            const purchaseMonth = purchaseDate.getFullYear() * 12 + purchaseDate.getMonth();
+            const currentMonth = referenceDate.getFullYear() * 12 + referenceDate.getMonth();
+            const monthsSincePurchase = currentMonth - purchaseMonth;
+            const installmentNumber = monthsSincePurchase < 0
+                ? 0
+                : Math.min(totalInstallments, monthsSincePurchase + 1);
+            return `(${installmentNumber}/${totalInstallments})`;
+        }
+
         function renderCardMovements(card) {
             const activeLabel = document.getElementById('active-card-name-label');
             const totalARS = document.getElementById('card-month-total-ars');
@@ -2081,8 +2100,8 @@
                             <h4 class="text-xs font-bold text-white">${escapeHtml(exp.title)}</h4>
                                 <div class="flex items-center gap-2 mt-0.5">
                                     <span class="text-[10px] text-slate-400">${escapeHtml(exp.category)}</span>
-                                    <span class="text-[9px] bg-slate-800 text-emerald-300 px-1.5 py-0.2 rounded-md border border-slate-700">
-                                        ${exp.installments === 'sub' ? 'Suscripción' : exp.installments === '1' ? 'Contado' : exp.installments + ' cuotas'}
+                                    <span class="text-[9px] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.2 rounded-md border border-emerald-500/20">
+                                        ${formatExpenseInstallmentProgress(exp)}
                                     </span>
                                 </div>
                             </div>
