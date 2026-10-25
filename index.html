@@ -393,8 +393,8 @@
                         <p id="card-projection-conversion-note" class="text-[9px] leading-relaxed text-slate-500 mt-1">Incluye pesos y dólares convertidos al dólar tarjeta vendedor.</p>
                     </div>
 
-                    <div id="card-projection-chart-container" class="relative w-full h-56 touch-none overscroll-contain">
-                        <canvas id="cardProjectionChart" class="touch-none overscroll-contain"></canvas>
+                    <div id="card-projection-chart-container" class="relative w-full h-56 pointer-events-none select-none">
+                        <canvas id="cardProjectionChart" class="pointer-events-none select-none"></canvas>
                     </div>
                     <div id="card-projection-empty" class="hidden p-5 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/40">
                         <i class="fa-solid fa-chart-simple text-2xl text-slate-600 mb-2"></i>
@@ -2225,14 +2225,11 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'nearest', intersect: false },
+                    events: [],
+                    animation: false,
                     plugins: {
                         legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: context => `${context.dataset.label}: ${formatMovementMoney(context.parsed.y, 'ARS')}`
-                            }
-                        }
+                        tooltip: { enabled: false }
                     },
                     scales: {
                         x: {
