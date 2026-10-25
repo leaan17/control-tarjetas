@@ -1274,6 +1274,22 @@
             catch { return null; }
         }
 
+        function setBiometricSetupDismissed(dismissed, userId = currentUser?.id) {
+            const key = getBiometricStorageKey(userId);
+            if (!key) return;
+            try {
+                if (dismissed) localStorage.setItem(`${key}:dismissed`, '1');
+                else localStorage.removeItem(`${key}:dismissed`);
+            } catch { /* The setting can still be managed for this session. */ }
+        }
+
+        function isBiometricSetupDismissed(userId = currentUser?.id) {
+            const key = getBiometricStorageKey(userId);
+            if (!key) return false;
+            try { return localStorage.getItem(`${key}:dismissed`) === '1'; }
+            catch { return false; }
+        }
+
         function setBiometricSettings(settings, userId = currentUser?.id) {
             const key = getBiometricStorageKey(userId);
             if (!key) return;
@@ -1370,6 +1386,7 @@
                 showToast('El bloqueo biométrico ya está activo');
                 return;
             }
+            if (!force && isBiometricSetupDismissed()) return;
             if (!force && biometricSetupPromptedFor === currentUser.id) return;
             if (!force) biometricSetupPromptedFor = currentUser.id;
             const canUseWebAuthn = window.isSecureContext && window.PublicKeyCredential && navigator.credentials?.create &&
@@ -1378,6 +1395,7 @@
             try { available = Boolean(canUseWebAuthn && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }
             catch { available = false; }
             if (!available) {
+                setBiometricSetupDismissed(true);
                 showToast('Este navegador o celular no ofrece el bloqueo biométrico');
                 return;
             }
@@ -1386,6 +1404,7 @@
         }
 
         function skipBiometricSetup() {
+            setBiometricSetupDismissed(true);
             document.getElementById('biometric-setup-modal').classList.add('hidden');
         }
 
@@ -1419,6 +1438,7 @@
                 const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)))
                     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
                 setBiometricSettings({ credentialId, rpId: location.hostname });
+                setBiometricSetupDismissed(false);
                 document.getElementById('biometric-setup-modal').classList.add('hidden');
                 biometricLastActivityAt = Date.now();
                 updateBiometricSettingsUI();
@@ -1477,6 +1497,7 @@
             if (!currentUser) return;
             try { localStorage.removeItem(getBiometricStorageKey()); }
             catch { showToast('No se pudo desactivar el bloqueo en este dispositivo'); return; }
+            setBiometricSetupDismissed(true);
             clearTimeout(biometricIdleTimer);
             biometricLocked = false;
             document.getElementById('biometric-lock').classList.add('hidden');
@@ -1635,6 +1656,8 @@
                 else promptBiometricSetup();
             } else if (getBiometricSettings(user.id) && !biometricLocked) {
                 resetBiometricIdleTimer();
+            } else if (!getBiometricSettings(user.id)) {
+                promptBiometricSetup();
             }
         }
 
