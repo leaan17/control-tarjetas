@@ -696,7 +696,7 @@
                     <div class="grid grid-cols-3 gap-2">
                         <div class="col-span-2">
                             <label class="block text-xs font-semibold text-slate-300 mb-1.5">Monto Total</label>
-                            <input type="number" id="expense-amount" required step="any" min="0.01" placeholder="Ej: 25000" class="app-input">
+                            <input type="number" id="expense-amount" required step="0.01" min="0.01" placeholder="Ej: 25000" class="app-input">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1.5">Moneda</label>
@@ -1804,6 +1804,16 @@
             return '$ ' + Number(amount).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         }
 
+        function formatMovementMoney(amount, currency = 'ARS') {
+            const value = Number(amount) || 0;
+            if (currency === 'USD') return formatMoney(value, 'USD');
+            const formatted = value.toLocaleString('es-AR', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+            return `$ ${formatted}`;
+        }
+
         function escapeHtml(value) {
             return String(value ?? '').replace(/[&<>"']/g, character => ({
                 '&': '&amp;',
@@ -2092,33 +2102,32 @@
                     const installmentCount = Number.parseInt(installmentType, 10);
                     const amountPerInstallment = Number(exp.amount || 0) /
                         (installmentType === 'sub' ? 1 : Number.isFinite(installmentCount) && installmentCount > 0 ? installmentCount : 1);
-                    const installmentAmountLabel = installmentType === 'sub' ? 'Mensual' : 'Cuota';
 
                     const item = document.createElement('div');
-                    item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center transition-all hover:border-slate-700/80';
+                    item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center gap-2 transition-all hover:border-slate-700/80';
                     item.innerHTML = `
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
                             <div class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-emerald-400 text-sm">
                                 <i class="fa-solid ${catIcon}"></i>
                             </div>
-                            <div>
-                            <h4 class="text-xs font-bold text-white">${escapeHtml(exp.title)}</h4>
-                                <div class="flex items-center gap-2 mt-0.5">
-                                    <span class="text-[10px] text-slate-400">${escapeHtml(exp.category)}</span>
-                                    <span class="text-[9px] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.2 rounded-md border border-emerald-500/20">
+                            <div class="min-w-0 flex-1">
+                                <h4 class="text-xs font-bold text-white truncate">${escapeHtml(exp.title)}</h4>
+                                <div class="flex items-center gap-1.5 mt-0.5 min-w-0">
+                                    <span class="text-[10px] text-slate-400 truncate">${escapeHtml(exp.category)}</span>
+                                    <span class="text-[9px] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.2 rounded-md border border-emerald-500/20 shrink-0">
                                         ${formatExpenseInstallmentProgress(exp)}
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="text-right flex items-center gap-2">
+                        <div class="text-right flex items-center gap-2 shrink-0">
                             <div>
                                 <p class="text-xs font-bold ${exp.currency === 'USD' ? 'text-emerald-400' : 'text-white'}">
-                                    ${formatMoney(exp.amount, exp.currency)}
+                                    ${formatMovementMoney(exp.amount, exp.currency)}
                                 </p>
                                 <p class="text-[9px] text-slate-400 mt-0.5 whitespace-nowrap">
-                                    ${installmentAmountLabel}: ${formatMoney(amountPerInstallment, exp.currency)}
+                                    ${formatMovementMoney(amountPerInstallment, exp.currency)}
                                 </p>
                             </div>
                             <button onclick="deleteExpense('${escapeHtml(exp.id)}')" class="w-6 h-6 text-slate-500 hover:text-rose-400 transition-colors ml-1">
