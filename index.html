@@ -430,7 +430,7 @@
 
                 <div class="glass-panel p-5 rounded-3xl space-y-3 shadow-xl">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
-                        <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <span id="installments-total-label" class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-calendar-check text-emerald-400"></i> Total estimado de este mes
                         </span>
                         <span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">En pesos</span>
@@ -439,33 +439,46 @@
                     <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
                         <span class="text-xs text-slate-400 font-medium">Contado + cuotas + suscripciones</span>
                         <p id="installments-month-total" class="text-2xl font-extrabold text-white mt-1">$ 0</p>
+                        <div id="installments-next-release" class="hidden items-start gap-1.5 mt-2 pt-2 border-t border-slate-800 text-[10px] leading-relaxed text-emerald-300">
+                            <i class="fa-solid fa-arrow-trend-down mt-0.5 shrink-0"></i>
+                            <span id="installments-next-release-text"></span>
+                        </div>
                     </div>
                     <p id="installments-conversion-note" class="text-[10px] leading-relaxed text-slate-500">Los consumos en dólares se convierten al dólar tarjeta vendedor.</p>
                 </div>
 
                 <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5 gap-2">
                         <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-chart-line text-emerald-400"></i> Proyección de gastos (12 meses)
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i> Proyección de gastos
                         </h3>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button" onclick="shiftInstallmentsProjectionMonth(-1)" aria-label="Mes anterior" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 hover:text-emerald-300 flex items-center justify-center">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <span id="installments-projection-month-label" class="text-[10px] font-semibold text-white text-center min-w-[104px]">-</span>
+                            <button type="button" onclick="shiftInstallmentsProjectionMonth(1)" aria-label="Mes siguiente" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 hover:text-emerald-300 flex items-center justify-center">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <div id="projection-chart-container" class="relative w-full h-56 touch-none overscroll-contain">
-                        <canvas id="projectionChart" class="touch-none overscroll-contain"></canvas>
+                    <div id="projection-chart-container" class="relative w-full h-56 pointer-events-none select-none">
+                        <canvas id="projectionChart" class="pointer-events-none select-none"></canvas>
                     </div>
                     <div id="projection-empty" class="hidden p-5 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/40">
                         <i class="fa-solid fa-chart-simple text-2xl text-slate-600 mb-2"></i>
                         <p id="projection-empty-title" class="text-xs font-semibold text-slate-300">Todavía no hay gastos para proyectar</p>
                         <p id="projection-empty-description" class="text-[10px] text-slate-500 mt-1">Las compras aparecerán mes a mes acá.</p>
                     </div>
-                    <p class="text-[10px] leading-relaxed text-slate-500">Incluye compras de contado en su mes, cuotas y suscripciones. Los dólares se convierten al dólar tarjeta vendedor disponible.</p>
+                    <p class="text-[10px] leading-relaxed text-slate-500">Las flechas cambian el mes inicial; la línea muestra los próximos 12 meses. Incluye compras de contado, cuotas y suscripciones.</p>
                 </div>
 
                 <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800">
                     <button onclick="toggleActivePlansAccordion()" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/40 transition-colors text-left">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-layer-group text-emerald-400"></i>
-                            <h3 class="text-sm font-bold text-white">Gastos incluidos</h3>
+                            <h3 class="text-sm font-bold text-white">Gastos de <span id="installments-list-month-label">-</span></h3>
                             <span id="active-plans-count" class="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">0 planes</span>
                         </div>
                         <i id="active-plans-chevron" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
@@ -921,6 +934,7 @@
         let cardProjectionChartInstance = null;
         let cardProjectionStartMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         let projectionChartInstance = null;
+        let installmentProjectionStartMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         let dollarCardSellRate = null;
         let dollarCardRateUpdatedAt = null;
         let isMovementsOpen = false;
@@ -2262,15 +2276,31 @@
             }
         }
 
+        function shiftInstallmentsProjectionMonth(offset) {
+            installmentProjectionStartMonth = new Date(
+                installmentProjectionStartMonth.getFullYear(),
+                installmentProjectionStartMonth.getMonth() + offset,
+                1
+            );
+            renderInstallmentsScreen();
+        }
+
         function renderInstallmentsScreen() {
             const monthTotal = document.getElementById('installments-month-total');
             const conversionNote = document.getElementById('installments-conversion-note');
             const plansList = document.getElementById('active-plans-list');
             const countLabel = document.getElementById('active-plans-count');
+            const totalLabel = document.getElementById('installments-total-label');
+            const monthLabel = document.getElementById('installments-projection-month-label');
+            const listMonthLabel = document.getElementById('installments-list-month-label');
+            const selectedMonth = new Date(installmentProjectionStartMonth.getFullYear(), installmentProjectionStartMonth.getMonth(), 1);
+            const selectedMonthName = formatProjectionMonthYear(selectedMonth);
             const projection = buildInstallmentProjection(12);
-            const installmentExpenses = expenses.filter(exp =>
-                projection.months.some(month => getInstallmentAmountForMonth(exp, month) > 0)
-            );
+            totalLabel.innerHTML = `<i class="fa-solid fa-calendar-check text-emerald-400"></i> Total estimado de ${escapeHtml(selectedMonthName)}`;
+            monthLabel.textContent = selectedMonthName;
+            listMonthLabel.textContent = selectedMonthName;
+
+            const installmentExpenses = expenses.filter(exp => getInstallmentAmountForMonth(exp, selectedMonth) > 0);
             countLabel.textContent = `${installmentExpenses.length} ${installmentExpenses.length === 1 ? 'gasto' : 'gastos'}`;
 
             plansList.innerHTML = '';
@@ -2279,20 +2309,20 @@
                 plansList.innerHTML = `
                     <div class="glass-panel p-5 text-center rounded-2xl border border-dashed border-slate-800">
                         <i class="fa-solid fa-layer-group text-2xl text-slate-600 mb-1"></i>
-                        <p class="text-xs text-slate-400 font-medium">No tenés cuotas activas o próximas</p>
+                        <p class="text-xs text-slate-400 font-medium">No hay gastos activos en ${escapeHtml(selectedMonthName.toLowerCase())}</p>
                     </div>
                 `;
             } else {
                 installmentExpenses.forEach(exp => {
                     const card = cards.find(c => c.id === exp.cardId);
-                    const isSub = exp.installments === 'sub';
+                    const isSub = String(exp.installments) === 'sub';
                     const isSinglePayment = String(exp.installments) === '1';
-                    const firstMonthIndex = projection.months.findIndex(month => getInstallmentAmountForMonth(exp, month) > 0);
-                    const monthlyValue = getInstallmentAmountForMonth(exp, projection.months[firstMonthIndex]);
-                    const planDetail = isSub ? 'Suscripción mensual' : isSinglePayment ? 'Pago único' : `${exp.installments} cuotas`;
-                    const startsLater = firstMonthIndex > 0
-                        ? ` • Empieza en ${formatProjectionMonth(projection.months[firstMonthIndex])}`
-                        : '';
+                    const monthlyValue = getInstallmentAmountForMonth(exp, selectedMonth);
+                    const planDetail = isSub
+                        ? 'Suscripción mensual'
+                        : isSinglePayment
+                            ? 'Pago único'
+                            : `Cuota ${formatExpenseInstallmentProgress(exp, selectedMonth)}`;
 
                     const item = document.createElement('div');
                     item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center transition-all hover:border-slate-700/80';
@@ -2303,12 +2333,12 @@
                             </div>
                             <div>
                                 <h4 class="text-xs font-bold text-white">${escapeHtml(exp.title)}</h4>
-                                <p class="text-[10px] text-slate-400">${card ? escapeHtml(card.name) : 'Tarjeta'} • ${planDetail}${startsLater}</p>
+                                <p class="text-[10px] text-slate-400">${card ? escapeHtml(card.name) : 'Tarjeta'} • ${planDetail}</p>
                             </div>
                         </div>
                         <div class="text-right">
                             <p class="text-xs font-bold ${exp.currency === 'USD' ? 'text-emerald-400' : 'text-white'}">
-                                ${formatMoney(monthlyValue, exp.currency)} ${isSinglePayment ? 'único' : '/ mes'}
+                                ${formatMovementMoney(monthlyValue, exp.currency)} ${isSinglePayment ? 'único' : '/ mes'}
                             </p>
                         </div>
                     `;
@@ -2316,17 +2346,66 @@
                 });
             }
 
-            monthTotal.textContent = formatMoney(projection.totalARS[0], 'ARS');
-            conversionNote.textContent = formatProjectionConversionNote(projection);
+            monthTotal.textContent = formatMovementMoney(projection.totalARS[0], 'ARS');
+            conversionNote.textContent = formatProjectionConversionNote(projection, selectedMonthName);
+            renderNextInstallmentRelease(selectedMonth);
 
             renderProjectionChart(projection);
         }
 
+        function renderNextInstallmentRelease(selectedMonth) {
+            const container = document.getElementById('installments-next-release');
+            const label = document.getElementById('installments-next-release-text');
+            const selectedMonthIndex = selectedMonth.getFullYear() * 12 + selectedMonth.getMonth();
+            const releasesByMonth = new Map();
+
+            expenses.forEach(expense => {
+                if (String(expense.installments ?? '1') === 'sub') return;
+                const installmentCount = Number.parseInt(expense.installments ?? '1', 10);
+                if (!Number.isFinite(installmentCount) || installmentCount < 2) return;
+
+                const purchaseDate = parseLocalISODate(expense.date);
+                if (!purchaseDate) return;
+
+                const purchaseMonthIndex = purchaseDate.getFullYear() * 12 + purchaseDate.getMonth();
+                const releaseMonthIndex = purchaseMonthIndex + installmentCount;
+                if (releaseMonthIndex < selectedMonthIndex) return;
+
+                if (!releasesByMonth.has(releaseMonthIndex)) {
+                    releasesByMonth.set(releaseMonthIndex, { ars: 0, usd: 0 });
+                }
+                const monthlyAmount = (Number(expense.amount) || 0) / installmentCount;
+                const release = releasesByMonth.get(releaseMonthIndex);
+                if (expense.currency === 'USD') release.usd += monthlyAmount;
+                else release.ars += monthlyAmount;
+            });
+
+            if (releasesByMonth.size === 0) {
+                container.classList.add('hidden');
+                container.classList.remove('flex');
+                return;
+            }
+
+            const nextReleaseIndex = Math.min(...releasesByMonth.keys());
+            const release = releasesByMonth.get(nextReleaseIndex);
+            const releaseMonth = new Date(Math.floor(nextReleaseIndex / 12), nextReleaseIndex % 12, 1);
+            const releaseMonthName = formatProjectionMonthYear(releaseMonth);
+            if (dollarCardSellRate) {
+                const totalARS = release.ars + release.usd * dollarCardSellRate;
+                label.textContent = `Desde ${releaseMonthName}, se liberan ${formatMovementMoney(totalARS, 'ARS')} por mes.`;
+            } else {
+                const amounts = [];
+                if (release.ars > 0) amounts.push(formatMovementMoney(release.ars, 'ARS'));
+                if (release.usd > 0) amounts.push(`${formatMovementMoney(release.usd, 'USD')} (sin cotización)`);
+                label.textContent = `Desde ${releaseMonthName}, se liberan ${amounts.join(' + ')} por mes.`;
+            }
+            container.classList.remove('hidden');
+            container.classList.add('flex');
+        }
+
         function buildInstallmentProjection(monthCount) {
-            const now = new Date();
-            const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
             const months = Array.from({ length: monthCount }, (_, index) =>
-                new Date(currentMonth.getFullYear(), currentMonth.getMonth() + index, 1)
+                new Date(installmentProjectionStartMonth.getFullYear(), installmentProjectionStartMonth.getMonth() + index, 1)
             );
             const projection = {
                 months,
@@ -2462,14 +2541,11 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'nearest', intersect: false },
+                    events: [],
+                    animation: false,
                     plugins: {
                         legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: context => `${context.dataset.label}: ${formatMoney(context.parsed.y, 'ARS')}`
-                            }
-                        }
+                        tooltip: { enabled: false }
                     },
                     scales: {
                         x: {
