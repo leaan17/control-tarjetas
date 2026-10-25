@@ -19,12 +19,12 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            900: '#1e1b4b',
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#022c22',
                         },
                         darkbg: '#0b0f19',
                         darkcard: '#161e2e',
@@ -141,15 +141,15 @@
             color: #cbd5e1;
             transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         }
-        html.dark .calendar-day:hover:not(.selected) { background: rgba(99, 102, 241, 0.16); color: #c7d2fe; }
+        html.dark .calendar-day:hover:not(.selected) { background: rgba(16, 185, 129, 0.16); color: #a7f3d0; }
         html.light .calendar-day { color: #475569; }
-        html.light .calendar-day:hover:not(.selected) { background: #eef2ff; color: #4338ca; }
-        .calendar-day.today:not(.selected) { border-color: rgba(129, 140, 248, 0.55); color: #a5b4fc; }
-        html.light .calendar-day.today:not(.selected) { color: #4f46e5; }
-        .calendar-day.selected { background: #4f46e5; color: #ffffff; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.32); }
+        html.light .calendar-day:hover:not(.selected) { background: #ecfdf5; color: #047857; }
+        .calendar-day.today:not(.selected) { border-color: rgba(52, 211, 153, 0.55); color: #6ee7b7; }
+        html.light .calendar-day.today:not(.selected) { color: #059669; }
+        .calendar-day.selected { background: #059669; color: #ffffff; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.32); }
         .calendar-nav-button { transition: background-color 0.15s ease, color 0.15s ease; }
-        html.dark .calendar-nav-button:hover { background: rgba(99, 102, 241, 0.2); color: #c7d2fe; }
-        html.light .calendar-nav-button:hover { background: #eef2ff; color: #4338ca; }
+        html.dark .calendar-nav-button:hover { background: rgba(16, 185, 129, 0.2); color: #a7f3d0; }
+        html.light .calendar-nav-button:hover { background: #ecfdf5; color: #047857; }
 
         .custom-select-wrapper { position: relative; }
         .custom-select-wrapper::after {
@@ -160,7 +160,7 @@
             right: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: #818cf8;
+            color: #34d399;
             pointer-events: none;
             font-size: 0.85rem;
         }
@@ -187,7 +187,7 @@
         }
         .custom-select-trigger i {
             flex: none;
-            color: #818cf8;
+            color: #34d399;
             transition: transform 0.18s ease;
         }
         .custom-select-wrapper.is-open .custom-select-trigger i { transform: rotate(180deg); }
@@ -229,13 +229,13 @@
             transition: background-color 0.15s ease, color 0.15s ease;
         }
         html.dark .custom-select-option:hover,
-        html.dark .custom-select-option:focus-visible { background: rgba(99, 102, 241, 0.16); color: #eef2ff; outline: none; }
-        .custom-select-option.selected { background: rgba(99, 102, 241, 0.2); color: #c7d2fe; }
-        .custom-select-option .fa-check { color: #818cf8; font-size: 0.72rem; }
+        html.dark .custom-select-option:focus-visible { background: rgba(16, 185, 129, 0.16); color: #ecfdf5; outline: none; }
+        .custom-select-option.selected { background: rgba(16, 185, 129, 0.2); color: #a7f3d0; }
+        .custom-select-option .fa-check { color: #34d399; font-size: 0.72rem; }
         html.light .custom-select-option { color: #475569; }
         html.light .custom-select-option:hover,
-        html.light .custom-select-option:focus-visible { background: #eef2ff; color: #312e81; outline: none; }
-        html.light .custom-select-option.selected { background: #eef2ff; color: #4338ca; }
+        html.light .custom-select-option:focus-visible { background: #ecfdf5; color: #312e81; outline: none; }
+        html.light .custom-select-option.selected { background: #ecfdf5; color: #047857; }
         .custom-select-empty { padding: 0.75rem; color: #94a3b8; font-size: 0.78rem; text-align: center; }
 
         .app-input {
@@ -259,11 +259,11 @@
         }
 
         .app-input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
         }
 
-        .btn-plus-glow { box-shadow: 0 0 22px rgba(99, 102, 241, 0.45); }
+        .btn-plus-glow { box-shadow: 0 0 22px rgba(16, 185, 129, 0.45); }
 
         .card-carousel {
             scroll-snap-type: x mandatory;
@@ -274,7 +274,7 @@
             scroll-snap-stop: always;
         }
 
-        .card-grad-visa { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e3a8a 100%); }
+        .card-grad-visa { background: linear-gradient(135deg, #022c22 0%, #312e81 40%, #1e3a8a 100%); }
         .card-grad-master { background: linear-gradient(135deg, #2a080c 0%, #4c0519 40%, #881337 100%); }
         .card-grad-amex { background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #0f766e 100%); }
         .card-grad-cabal { background: linear-gradient(135deg, #3f2b96 0%, #a8c0ff 100%); }
@@ -292,12 +292,12 @@
             <!-- HEADER / BIENVENIDA -->
             <header class="flex justify-between items-center pt-2">
                 <div>
-                    <span class="text-xs font-semibold tracking-wider text-indigo-500 uppercase">Bienvenido de nuevo</span>
+                    <span class="text-xs font-semibold tracking-wider text-emerald-500 uppercase">Bienvenido de nuevo</span>
                     <h1 id="user-greeting" class="text-2xl font-bold text-white flex items-center gap-2">
-                        ¡Hola, Guest! <span class="text-xl">👋</span>
+                        ¡Hola! <span class="text-xl">👋</span>
                     </h1>
                 </div>
-                <button onclick="openLoginModal()" class="w-10 h-10 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-indigo-400 hover:text-white transition-all shadow-md">
+                <button onclick="openLoginModal()" class="w-10 h-10 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-emerald-400 hover:text-white transition-all shadow-md">
                     <i id="user-avatar-icon" class="fa-solid fa-user"></i>
                 </button>
             </header>
@@ -305,13 +305,13 @@
             <!-- PANTALLA 1: INICIO (HOME) -->
             <section id="screen-home" class="space-y-5">
                 <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl relative overflow-hidden">
-                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-600/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-600/10 rounded-full blur-2xl pointer-events-none"></div>
                     
                     <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
                         <span class="text-xs font-medium text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-wallet text-indigo-400"></i> Deuda Total en Tarjetas
+                            <i class="fa-solid fa-wallet text-emerald-400"></i> Deuda Total en Tarjetas
                         </span>
-                        <span class="text-[11px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">
+                        <span class="text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-medium">
                             Resumen General
                         </span>
                     </div>
@@ -345,7 +345,7 @@
                             Mis Tarjetas
                             <span id="card-count-badge" class="bg-slate-800 text-slate-400 text-xs px-2.5 py-0.5 rounded-full font-medium">0</span>
                         </h2>
-                        <button onclick="openCardModal()" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 rounded-xl transition-all">
+                        <button onclick="openCardModal()" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 px-3 py-1.5 rounded-xl transition-all">
                             <i class="fa-solid fa-plus text-xs"></i> Agregar Tarjeta
                         </button>
                     </div>
@@ -369,10 +369,10 @@
                 <div class="glass-panel p-5 rounded-3xl space-y-3 shadow-xl">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
                         <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-receipt text-indigo-400"></i>
+                            <i class="fa-solid fa-receipt text-emerald-400"></i>
                             <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Movimientos del Mes</span>
                         </div>
-                        <span id="active-card-name-label" class="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-500/20">-</span>
+                        <span id="active-card-name-label" class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">-</span>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 pt-1">
@@ -405,7 +405,7 @@
                 <div class="glass-panel p-5 rounded-3xl space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
                         <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-chart-pie text-indigo-400"></i> Gastos por Categoría
+                            <i class="fa-solid fa-chart-pie text-emerald-400"></i> Gastos por Categoría
                         </h3>
                         <span class="text-xs text-slate-400">Este mes</span>
                     </div>
@@ -430,9 +430,9 @@
                 <div class="glass-panel p-5 rounded-3xl space-y-3 shadow-xl">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
                         <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-calendar-check text-indigo-400"></i> Total Cuotas de este Mes
+                            <i class="fa-solid fa-calendar-check text-emerald-400"></i> Total Cuotas de este Mes
                         </span>
-                        <span class="text-xs text-indigo-400 font-semibold bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-500/20">A pagar</span>
+                        <span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">A pagar</span>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 pt-1">
@@ -450,8 +450,12 @@
                 <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
                         <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-chart-column text-indigo-400"></i> Proyección de Cuotas (12 meses)
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i> Proyección de Cuotas
                         </h3>
+                        <div class="flex rounded-xl bg-slate-900/70 border border-slate-800 p-1" role="group" aria-label="Moneda de la proyección">
+                            <button id="projection-currency-ars" type="button" onclick="setProjectionCurrency('ARS')" class="px-2.5 py-1.5 text-[10px] font-semibold rounded-lg transition-colors">Pesos</button>
+                            <button id="projection-currency-usd" type="button" onclick="setProjectionCurrency('USD')" class="px-2.5 py-1.5 text-[10px] font-semibold rounded-lg transition-colors">Dólares</button>
+                        </div>
                     </div>
 
                     <div id="projection-chart-container" class="relative w-full h-56">
@@ -462,13 +466,13 @@
                         <p class="text-xs font-semibold text-slate-300">Todavía no hay cuotas para proyectar</p>
                         <p class="text-[10px] text-slate-500 mt-1">Las compras en cuotas aparecerán mes a mes acá.</p>
                     </div>
-                    <p class="text-[10px] leading-relaxed text-slate-500">Estimación: la primera cuota se cuenta en el mes de compra y los importes se dividen en partes iguales.</p>
+                    <p class="text-[10px] leading-relaxed text-slate-500">Proyección de cuotas y suscripciones. Pesos y dólares se muestran por separado. La primera cuota se cuenta en el mes de compra.</p>
                 </div>
 
                 <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800">
                     <button onclick="toggleActivePlansAccordion()" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/40 transition-colors text-left">
                         <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                            <i class="fa-solid fa-layer-group text-emerald-400"></i>
                             <h3 class="text-sm font-bold text-white">Planes Activos</h3>
                             <span id="active-plans-count" class="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">0 planes</span>
                         </div>
@@ -495,7 +499,7 @@
                             <i class="fa-solid fa-dollar-sign text-emerald-400"></i>
                             <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Cotización del Dólar Hoy</h3>
                         </div>
-                        <button onclick="fetchDollarRates()" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                        <button onclick="fetchDollarRates()" class="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
                             <i class="fa-solid fa-rotate text-[10px]"></i> Actualizar
                         </button>
                     </div>
@@ -503,7 +507,7 @@
                     <div id="dollar-rates-container" class="grid grid-cols-2 gap-2.5">
                         <!-- Cargando cotizaciones... -->
                         <div class="col-span-2 text-center py-4 text-xs text-slate-500">
-                            <i class="fa-solid fa-spinner fa-spin text-base text-indigo-400 mb-1"></i>
+                            <i class="fa-solid fa-spinner fa-spin text-base text-emerald-400 mb-1"></i>
                             <p>Cargando cotizaciones oficiales...</p>
                         </div>
                     </div>
@@ -513,14 +517,14 @@
                 <!-- PREFERENCIAS Y APARIENCIA -->
                 <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
                     <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-indigo-400"></i> Apariencia & Datos
+                        <i class="fa-solid fa-sliders text-emerald-400"></i> Apariencia & Datos
                     </h3>
 
                     <div class="space-y-3">
                         <!-- TOGGLE TEMA MODO CLARO / MODO OSCURO -->
                         <div class="flex justify-between items-center bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
                             <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                                 </div>
                                 <div>
@@ -528,7 +532,7 @@
                                     <p id="theme-status-text" class="text-[10px] text-slate-400">Modo Oscuro activo</p>
                                 </div>
                             </div>
-                            <button onclick="toggleTheme()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md">
+                            <button onclick="toggleTheme()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md">
                                 Cambiar
                             </button>
                         </div>
@@ -554,23 +558,37 @@
                 <!-- SESIÓN DE USUARIO -->
                 <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
                     <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
-                        <i class="fa-solid fa-user-gear text-indigo-400"></i> Cuenta de Usuario
+                        <i class="fa-solid fa-user-gear text-emerald-400"></i> Cuenta de Usuario
                     </h3>
 
                     <div id="user-profile-card" class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 flex justify-between items-center">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold">
                                 <i class="fa-solid fa-user"></i>
                             </div>
                             <div>
-                                <p id="profile-email-text" class="text-xs font-bold text-white">Sin sesión iniciada</p>
+                                <div class="flex items-center gap-2">
+                                    <p id="profile-name-text" class="text-xs font-bold text-white">Sin sesión iniciada</p>
+                                    <button id="profile-name-edit-btn" onclick="openProfileNameModal()" class="hidden text-[10px] text-emerald-400 hover:text-emerald-300" aria-label="Editar nombre"><i class="fa-solid fa-pen"></i></button>
+                                </div>
+                                <p id="profile-email-text" class="text-[10px] text-slate-400"></p>
                                 <p id="profile-status-text" class="text-[10px] text-slate-400">Iniciá sesión para sincronizar tus datos</p>
                             </div>
                         </div>
-                        <button id="profile-action-btn" onclick="openLoginModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md">
+                        <button id="profile-action-btn" onclick="openLoginModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md">
                             Iniciar Sesión
                         </button>
                     </div>
+                    <div id="biometric-settings-row" class="hidden flex justify-between items-center bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
+                        <div>
+                            <p class="text-xs font-bold text-white">Bloqueo biométrico</p>
+                            <p class="text-[10px] text-slate-400">Al volver o tras 5 minutos sin usarla</p>
+                        </div>
+                        <button onclick="disableBiometricLock()" class="text-xs font-semibold text-rose-400 hover:text-rose-300 px-3 py-2">Desactivar</button>
+                    </div>
+                    <button id="biometric-enable-button" onclick="promptBiometricSetup(true)" class="hidden w-full text-left bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800 text-xs font-semibold text-emerald-400 hover:bg-slate-800/80">
+                        <i class="fa-solid fa-fingerprint mr-2"></i>Activar bloqueo biométrico
+                    </button>
                 </div>
             </section>
 
@@ -579,7 +597,7 @@
         <!-- BARRA DE NAVEGACIÓN INFERIOR (BOTTOM NAV) -->
         <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-slate-900/95 backdrop-blur-md border-t border-slate-800/80 px-4 py-2 z-40">
             <div class="grid grid-cols-5 items-center">
-                <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center py-1 text-indigo-400 font-medium text-[11px] transition-colors">
+                <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center py-1 text-emerald-400 font-medium text-[11px] transition-colors">
                     <i class="fa-solid fa-house-chimney text-lg mb-1"></i>
                     <span>Inicio</span>
                 </button>
@@ -590,7 +608,7 @@
                 </button>
 
                 <div class="flex justify-center -mt-6 relative">
-                    <button onclick="openAddExpenseModal()" class="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg btn-plus-glow hover:scale-105 active:scale-95 transition-all">
+                    <button onclick="openAddExpenseModal()" class="w-14 h-14 bg-gradient-to-tr from-emerald-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg btn-plus-glow hover:scale-105 active:scale-95 transition-all">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
@@ -654,7 +672,7 @@
                         <button type="button" onclick="closeCardModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">
                             Cancelar
                         </button>
-                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">
+                        <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-emerald-600/30">
                             Guardar
                         </button>
                     </div>
@@ -667,7 +685,7 @@
             <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-cart-plus text-indigo-400"></i> Registrar Compra
+                        <i class="fa-solid fa-cart-plus text-emerald-400"></i> Registrar Compra
                     </h3>
                     <button onclick="closeAddExpenseModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
                         <i class="fa-solid fa-xmark"></i>
@@ -708,7 +726,7 @@
                             <div class="relative">
                                 <input type="text" id="expense-date-display" readonly required placeholder="Elegí una fecha" aria-label="Fecha de compra" aria-haspopup="dialog" aria-controls="expense-calendar" onclick="openExpenseCalendar()" onkeydown="if(event.key === 'Enter' || event.key === ' '){event.preventDefault();openExpenseCalendar();}" class="app-input date-picker-input">
                                 <input type="hidden" id="expense-date">
-                                <button type="button" onclick="openExpenseCalendar()" aria-label="Abrir calendario" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl text-indigo-400 hover:bg-indigo-500/10 flex items-center justify-center transition-colors">
+                                <button type="button" onclick="openExpenseCalendar()" aria-label="Abrir calendario" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl text-emerald-400 hover:bg-emerald-500/10 flex items-center justify-center transition-colors">
                                     <i class="fa-regular fa-calendar-days"></i>
                                 </button>
                             </div>
@@ -752,7 +770,7 @@
 
                     <div class="pt-2 flex gap-3">
                         <button type="button" onclick="closeAddExpenseModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">Cancelar</button>
-                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">Guardar Compra</button>
+                        <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-emerald-600/30">Guardar Compra</button>
                     </div>
                 </form>
             </div>
@@ -775,8 +793,8 @@
                 </div>
                 <div id="expense-calendar-days" class="grid grid-cols-7 gap-1"></div>
                 <div class="flex items-center justify-between border-t border-slate-800 mt-5 pt-4">
-                    <button type="button" onclick="chooseTodayForExpense()" class="text-xs font-semibold text-indigo-300 hover:text-indigo-200 px-2 py-2">Hoy</button>
-                    <button type="button" onclick="closeExpenseCalendar()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/20">Cerrar</button>
+                    <button type="button" onclick="chooseTodayForExpense()" class="text-xs font-semibold text-emerald-300 hover:text-emerald-200 px-2 py-2">Hoy</button>
+                    <button type="button" onclick="closeExpenseCalendar()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -786,7 +804,7 @@
             <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                     <h3 id="auth-modal-title" class="text-lg font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-user-lock text-indigo-400"></i> Iniciar Sesión
+                        <i class="fa-solid fa-user-lock text-emerald-400"></i> Iniciar Sesión
                     </h3>
                     <button onclick="closeLoginModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
                         <i class="fa-solid fa-xmark"></i>
@@ -794,6 +812,10 @@
                 </div>
 
                 <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                    <div id="auth-name-field" class="hidden">
+                        <label for="auth-name" class="block text-xs font-semibold text-slate-300 mb-1.5">¿Cómo te llamás?</label>
+                        <input type="text" id="auth-name" autocomplete="name" maxlength="50" placeholder="Tu nombre" class="app-input">
+                    </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1.5">Correo Electrónico</label>
                         <input type="email" id="auth-email" required autocomplete="email" placeholder="tuemail@ejemplo.com" class="app-input">
@@ -808,10 +830,60 @@
 
                     <div class="pt-2 flex gap-3">
                         <button type="button" onclick="closeLoginModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">Cancelar</button>
-                        <button type="submit" id="auth-submit-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">Ingresar</button>
+                        <button type="submit" id="auth-submit-btn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-emerald-600/30">Ingresar</button>
                     </div>
-                    <button type="button" id="auth-mode-toggle" onclick="toggleAuthMode()" class="w-full text-xs font-semibold text-indigo-300 hover:text-indigo-200">¿No tenés cuenta? Crear una</button>
+                    <button type="button" id="auth-mode-toggle" onclick="toggleAuthMode()" class="w-full text-xs font-semibold text-emerald-300 hover:text-emerald-200">¿No tenés cuenta? Crear una</button>
                 </form>
+            </div>
+        </div>
+
+        <!-- MODAL: EDITAR NOMBRE DE CUENTA -->
+        <div id="profile-name-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[80] hidden flex items-center justify-center p-5">
+            <form onsubmit="saveProfileName(event)" class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 space-y-4">
+                <div>
+                    <h3 class="text-base font-bold text-white">Tu nombre</h3>
+                    <p class="text-xs text-slate-400 mt-1">Así te vamos a saludar al entrar.</p>
+                </div>
+                <input id="profile-name-input" type="text" maxlength="50" autocomplete="name" required placeholder="Tu nombre" class="app-input">
+                <p id="profile-name-message" class="hidden text-xs text-rose-400" role="status" aria-live="polite"></p>
+                <div class="flex gap-3 pt-1">
+                    <button type="button" onclick="closeProfileNameModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">Cancelar</button>
+                    <button id="profile-name-save-btn" type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-semibold">Guardar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- MODAL: CONFIGURAR BLOQUEO BIOMÉTRICO -->
+        <div id="biometric-setup-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] hidden flex items-center justify-center p-5">
+            <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 space-y-4 text-center shadow-2xl">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl mx-auto">
+                    <i class="fa-solid fa-fingerprint"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">¿Activamos el bloqueo?</h3>
+                    <p class="text-xs text-slate-400 mt-2">Al abrir la app y después de 5 minutos sin usarla, tu celular te pedirá verificarte con huella, rostro o el método de desbloqueo disponible.</p>
+                </div>
+                <p id="biometric-setup-message" class="hidden text-xs text-rose-400" role="status" aria-live="polite"></p>
+                <div class="flex gap-3 pt-1">
+                    <button type="button" onclick="skipBiometricSetup()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">Ahora no</button>
+                    <button type="button" id="biometric-setup-button" onclick="enableBiometricLock()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">Activar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOQUEO DE PRIVACIDAD -->
+        <div id="biometric-lock" class="fixed inset-0 bg-slate-950/95 backdrop-blur-xl z-[100] hidden flex items-center justify-center p-6" role="dialog" aria-modal="true" aria-labelledby="biometric-lock-title">
+            <div class="w-full max-w-sm text-center space-y-5">
+                <div class="w-20 h-20 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-4xl mx-auto">
+                    <i class="fa-solid fa-fingerprint"></i>
+                </div>
+                <div>
+                    <h2 id="biometric-lock-title" class="text-2xl font-bold text-white">Tu app está bloqueada</h2>
+                    <p class="text-sm text-slate-400 mt-2">Verificate para volver a tus tarjetas.</p>
+                </div>
+                <p id="biometric-lock-message" class="hidden text-xs text-rose-400" role="status" aria-live="polite"></p>
+                <button id="biometric-unlock-button" type="button" onclick="unlockWithBiometrics()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-2xl text-sm font-semibold shadow-lg">Desbloquear</button>
+                <button type="button" onclick="handleLogout()" class="text-xs text-slate-400 hover:text-white">Cerrar sesión</button>
             </div>
         </div>
 
@@ -834,7 +906,7 @@
 
         <!-- NOTIFICACIÓN TOAST -->
         <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-4 py-2.5 rounded-2xl border border-slate-700 shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
-            <i class="fa-solid fa-circle-check text-indigo-400"></i>
+            <i class="fa-solid fa-circle-check text-emerald-400"></i>
             <span id="toast-msg">Mensaje</span>
         </div>
 
@@ -856,9 +928,16 @@
         let activeCardIndex = 0;
         let categoryChartInstance = null;
         let projectionChartInstance = null;
+        let projectionCurrency = 'ARS';
         let isMovementsOpen = false;
         let isActivePlansOpen = false;
         let expenseCalendarCursor = new Date();
+        let biometricIdleTimer = null;
+        let biometricLocked = false;
+        let biometricLastActivityAt = Date.now();
+        let biometricManualAuthUserId = '';
+        let biometricStartupLockUserId = '';
+        let biometricSetupPromptedFor = '';
 
         document.addEventListener('DOMContentLoaded', () => {
             renderHome();
@@ -870,6 +949,7 @@
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'Escape') closeExpenseCalendar();
             });
+            initializeBiometricActivityTracking();
             initializeCloudAccount();
         });
 
@@ -1131,7 +1211,7 @@
             const container = document.getElementById('dollar-rates-container');
             container.innerHTML = `
                 <div class="col-span-2 text-center py-4 text-xs text-slate-500">
-                    <i class="fa-solid fa-spinner fa-spin text-base text-indigo-400 mb-1"></i>
+                    <i class="fa-solid fa-spinner fa-spin text-base text-emerald-400 mb-1"></i>
                     <p>Cargando cotizaciones...</p>
                 </div>
             `;
@@ -1150,7 +1230,7 @@
                     let title = escapeHtml(item.nombre);
                     let badgeColor = 'bg-slate-800 text-slate-300';
                     if (item.casa === 'blue') badgeColor = 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-                    if (item.casa === 'tarjeta') badgeColor = 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+                    if (item.casa === 'tarjeta') badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
                     if (item.casa === 'oficial') badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
 
                     const card = document.createElement('div');
@@ -1181,6 +1261,228 @@
                     </div>
                 `;
             }
+        }
+
+        function getBiometricStorageKey(userId = currentUser?.id) {
+            return userId ? `control-tarjetas:biometric:${location.hostname}:${userId}` : '';
+        }
+
+        function getBiometricSettings(userId = currentUser?.id) {
+            const key = getBiometricStorageKey(userId);
+            if (!key) return null;
+            try { return JSON.parse(localStorage.getItem(key) || 'null'); }
+            catch { return null; }
+        }
+
+        function setBiometricSettings(settings, userId = currentUser?.id) {
+            const key = getBiometricStorageKey(userId);
+            if (!key) return;
+            localStorage.setItem(key, JSON.stringify(settings));
+        }
+
+        function updateBiometricSettingsUI() {
+            const enabled = Boolean(currentUser && getBiometricSettings());
+            const activeRow = document.getElementById('biometric-settings-row');
+            const enableButton = document.getElementById('biometric-enable-button');
+            const nameEditButton = document.getElementById('profile-name-edit-btn');
+            if (activeRow) activeRow.classList.toggle('hidden', !enabled);
+            if (enableButton) enableButton.classList.toggle('hidden', !currentUser || enabled);
+            if (nameEditButton) nameEditButton.classList.toggle('hidden', !currentUser);
+        }
+
+        function openProfileNameModal() {
+            if (!currentUser) return;
+            document.getElementById('profile-name-input').value = currentUser.displayName || '';
+            document.getElementById('profile-name-message').classList.add('hidden');
+            document.getElementById('profile-name-modal').classList.remove('hidden');
+            document.getElementById('profile-name-input').focus();
+        }
+
+        function closeProfileNameModal() {
+            document.getElementById('profile-name-modal').classList.add('hidden');
+        }
+
+        async function saveProfileName(event) {
+            event.preventDefault();
+            if (!currentUser || !supabaseClient) return;
+            const name = document.getElementById('profile-name-input').value.trim().slice(0, 50);
+            const button = document.getElementById('profile-name-save-btn');
+            const message = document.getElementById('profile-name-message');
+            button.disabled = true;
+            button.textContent = 'Guardando...';
+            message.classList.add('hidden');
+            try {
+                const { data, error } = await supabaseClient.auth.updateUser({ data: { full_name: name } });
+                if (error) throw error;
+                currentUser.displayName = data.user?.user_metadata?.full_name || name;
+                document.getElementById('user-greeting').textContent = `¡Hola, ${currentUser.displayName}! 👋`;
+                document.getElementById('profile-name-text').textContent = currentUser.displayName;
+                closeProfileNameModal();
+                showToast('Nombre actualizado');
+            } catch (error) {
+                message.textContent = error.message || 'No se pudo guardar el nombre. Intentá de nuevo.';
+                message.classList.remove('hidden');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Guardar';
+            }
+        }
+
+        function initializeBiometricActivityTracking() {
+            const recordActivity = () => {
+                if (!currentUser || biometricLocked || !getBiometricSettings()) return;
+                biometricLastActivityAt = Date.now();
+                resetBiometricIdleTimer();
+            };
+            ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(eventName =>
+                window.addEventListener(eventName, recordActivity, { passive: true })
+            );
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden || !currentUser || biometricLocked || !getBiometricSettings()) return;
+                if (Date.now() - biometricLastActivityAt >= 5 * 60 * 1000) lockAppWithBiometrics();
+                else resetBiometricIdleTimer();
+            });
+        }
+
+        function resetBiometricIdleTimer() {
+            clearTimeout(biometricIdleTimer);
+            if (!currentUser || biometricLocked || !getBiometricSettings()) return;
+            const idleLimit = 5 * 60 * 1000;
+            const remaining = Math.max(0, idleLimit - (Date.now() - biometricLastActivityAt));
+            biometricIdleTimer = window.setTimeout(lockAppWithBiometrics, remaining);
+        }
+
+        function lockAppWithBiometrics() {
+            if (!currentUser || !getBiometricSettings() || biometricLocked) return;
+            clearTimeout(biometricIdleTimer);
+            biometricLocked = true;
+            const overlay = document.getElementById('biometric-lock');
+            const message = document.getElementById('biometric-lock-message');
+            message.classList.add('hidden');
+            overlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            document.getElementById('biometric-unlock-button').focus();
+        }
+
+        async function promptBiometricSetup(force = false) {
+            if (!currentUser) return;
+            if (getBiometricSettings()) {
+                showToast('El bloqueo biométrico ya está activo');
+                return;
+            }
+            if (!force && biometricSetupPromptedFor === currentUser.id) return;
+            if (!force) biometricSetupPromptedFor = currentUser.id;
+            const canUseWebAuthn = window.isSecureContext && window.PublicKeyCredential && navigator.credentials?.create &&
+                typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
+            let available = false;
+            try { available = Boolean(canUseWebAuthn && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }
+            catch { available = false; }
+            if (!available) {
+                showToast('Este navegador o celular no ofrece el bloqueo biométrico');
+                return;
+            }
+            document.getElementById('biometric-setup-message').classList.add('hidden');
+            document.getElementById('biometric-setup-modal').classList.remove('hidden');
+        }
+
+        function skipBiometricSetup() {
+            document.getElementById('biometric-setup-modal').classList.add('hidden');
+        }
+
+        async function enableBiometricLock() {
+            if (!currentUser) return;
+            const button = document.getElementById('biometric-setup-button');
+            const message = document.getElementById('biometric-setup-message');
+            button.disabled = true;
+            button.textContent = 'Activando...';
+            message.classList.add('hidden');
+            try {
+                const challenge = crypto.getRandomValues(new Uint8Array(32));
+                const credential = await navigator.credentials.create({ publicKey: {
+                    challenge,
+                    rp: { id: location.hostname, name: 'Control de Tarjetas' },
+                    user: {
+                        id: crypto.getRandomValues(new Uint8Array(32)),
+                        name: currentUser.email || currentUser.id,
+                        displayName: currentUser.displayName || 'Usuario'
+                    },
+                    pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+                    authenticatorSelection: {
+                        authenticatorAttachment: 'platform',
+                        residentKey: 'discouraged',
+                        userVerification: 'required'
+                    },
+                    timeout: 60000,
+                    attestation: 'none'
+                } });
+                if (!credential) throw new Error('No se pudo configurar el bloqueo. Intentá de nuevo.');
+                const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)))
+                    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+                setBiometricSettings({ credentialId, rpId: location.hostname });
+                document.getElementById('biometric-setup-modal').classList.add('hidden');
+                biometricLastActivityAt = Date.now();
+                updateBiometricSettingsUI();
+                resetBiometricIdleTimer();
+                showToast('Bloqueo biométrico activado');
+            } catch (error) {
+                message.textContent = error.name === 'NotAllowedError'
+                    ? 'No se completó la verificación. Podés intentar otra vez.'
+                    : (error.message || 'No se pudo activar el bloqueo en este dispositivo.');
+                message.classList.remove('hidden');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Activar';
+            }
+        }
+
+        function decodeBase64Url(value) {
+            let base64 = value.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4) base64 += '=';
+            return Uint8Array.from(atob(base64), character => character.charCodeAt(0));
+        }
+
+        async function unlockWithBiometrics() {
+            const settings = getBiometricSettings();
+            if (!settings || !currentUser) return;
+            const button = document.getElementById('biometric-unlock-button');
+            const message = document.getElementById('biometric-lock-message');
+            button.disabled = true;
+            button.textContent = 'Verificando...';
+            message.classList.add('hidden');
+            try {
+                await navigator.credentials.get({ publicKey: {
+                    challenge: crypto.getRandomValues(new Uint8Array(32)),
+                    rpId: settings.rpId,
+                    allowCredentials: [{ type: 'public-key', id: decodeBase64Url(settings.credentialId) }],
+                    userVerification: 'required',
+                    timeout: 60000
+                } });
+                biometricLocked = false;
+                biometricLastActivityAt = Date.now();
+                document.getElementById('biometric-lock').classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+                resetBiometricIdleTimer();
+            } catch (error) {
+                message.textContent = error.name === 'NotAllowedError'
+                    ? 'No se completó la verificación. Tocá para volver a intentar.'
+                    : 'No se pudo verificar este dispositivo. Intentá de nuevo o cerrá sesión.';
+                message.classList.remove('hidden');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Desbloquear';
+            }
+        }
+
+        function disableBiometricLock() {
+            if (!currentUser) return;
+            try { localStorage.removeItem(getBiometricStorageKey()); }
+            catch { showToast('No se pudo desactivar el bloqueo en este dispositivo'); return; }
+            clearTimeout(biometricIdleTimer);
+            biometricLocked = false;
+            document.getElementById('biometric-lock').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+            updateBiometricSettingsUI();
+            showToast('Bloqueo biométrico desactivado en este dispositivo');
         }
 
         // Cuenta real y sincronización privada por usuario
@@ -1231,12 +1533,17 @@
             authMode = mode;
             const signingUp = mode === 'signup';
             document.getElementById('auth-modal-title').innerHTML = signingUp
-                ? '<i class="fa-solid fa-user-plus text-indigo-400"></i> Crear cuenta'
-                : '<i class="fa-solid fa-user-lock text-indigo-400"></i> Iniciar Sesión';
+                ? '<i class="fa-solid fa-user-plus text-emerald-400"></i> Crear cuenta'
+                : '<i class="fa-solid fa-user-lock text-emerald-400"></i> Iniciar Sesión';
             document.getElementById('auth-submit-btn').textContent = signingUp ? 'Crear cuenta' : 'Ingresar';
             document.getElementById('auth-mode-toggle').textContent = signingUp
                 ? '¿Ya tenés cuenta? Iniciar sesión'
                 : '¿No tenés cuenta? Crear una';
+            const nameField = document.getElementById('auth-name-field');
+            const nameInput = document.getElementById('auth-name');
+            nameField.classList.toggle('hidden', !signingUp);
+            nameInput.required = signingUp;
+            nameInput.setAttribute('autocomplete', signingUp ? 'name' : 'off');
             document.getElementById('auth-password').setAttribute('autocomplete', signingUp ? 'new-password' : 'current-password');
             document.getElementById('auth-message').classList.add('hidden');
         }
@@ -1260,6 +1567,7 @@
             }
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value;
+            const displayName = document.getElementById('auth-name').value.trim();
             const button = document.getElementById('auth-submit-btn');
             button.disabled = true;
 
@@ -1268,10 +1576,14 @@
                     const { data, error } = await supabaseClient.auth.signUp({
                         email,
                         password,
-                        options: { emailRedirectTo: window.location.href.split('#')[0] }
+                        options: {
+                            emailRedirectTo: window.location.href.split('#')[0],
+                            data: { full_name: displayName }
+                        }
                     });
                     if (error) throw error;
                     if (data.session?.user) {
+                        biometricManualAuthUserId = data.session.user.id;
                         closeLoginModal();
                         await updateSignedInUser(data.session.user, true);
                     } else {
@@ -1280,6 +1592,7 @@
                 } else {
                     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
                     if (error) throw error;
+                    biometricManualAuthUserId = data.user.id;
                     closeLoginModal();
                     await updateSignedInUser(data.user, true);
                 }
@@ -1293,19 +1606,36 @@
         async function updateSignedInUser(user, showWelcome) {
             if (!user || !supabaseClient) return;
             const isNewUser = !currentUser || currentUser.id !== user.id;
-            currentUser = { id: user.id, email: user.email || '' };
-            const displayName = currentUser.email.split('@')[0] || 'Usuario';
-            document.getElementById('user-greeting').innerHTML = `¡Hola, ${displayName}! <span class="text-xl">👋</span>`;
+            const email = user.email || '';
+            const displayName = String(user.user_metadata?.full_name || user.user_metadata?.name || email.split('@')[0] || 'Usuario').trim().slice(0, 50);
+            currentUser = { id: user.id, email, displayName };
+            document.getElementById('user-greeting').textContent = `¡Hola, ${displayName}! 👋`;
+            document.getElementById('profile-name-text').textContent = displayName;
             document.getElementById('profile-email-text').textContent = currentUser.email;
             document.getElementById('profile-status-text').textContent = 'Tus registros se sincronizan con tu cuenta';
+            updateBiometricSettingsUI();
 
             const actionBtn = document.getElementById('profile-action-btn');
             actionBtn.textContent = 'Cerrar Sesión';
             actionBtn.className = 'bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-xs px-3.5 py-2 rounded-xl font-medium transition-all';
             actionBtn.onclick = handleLogout;
 
+            const shouldLockOnRestore = !showWelcome && biometricManualAuthUserId !== user.id &&
+                getBiometricSettings(user.id) && biometricStartupLockUserId !== user.id;
+            if (shouldLockOnRestore) {
+                biometricStartupLockUserId = user.id;
+                lockAppWithBiometrics();
+            }
             if (isNewUser || showWelcome) await loadCloudData();
-            if (showWelcome) showToast('Sesión iniciada');
+            if (showWelcome) {
+                biometricManualAuthUserId = user.id;
+                biometricLastActivityAt = Date.now();
+                showToast('Sesión iniciada');
+                if (getBiometricSettings(user.id)) resetBiometricIdleTimer();
+                else promptBiometricSetup();
+            } else if (getBiometricSettings(user.id) && !biometricLocked) {
+                resetBiometricIdleTimer();
+            }
         }
 
         async function loadCloudData() {
@@ -1353,24 +1683,36 @@
                     return;
                 }
             }
+            biometricManualAuthUserId = '';
+            biometricStartupLockUserId = '';
             clearSignedInUser();
             showToast('Sesión cerrada');
         }
 
         function clearSignedInUser() {
+            clearTimeout(biometricIdleTimer);
+            biometricLocked = false;
+            biometricManualAuthUserId = '';
+            biometricStartupLockUserId = '';
+            document.getElementById('biometric-lock')?.classList.add('hidden');
+            document.getElementById('biometric-setup-modal')?.classList.add('hidden');
+            document.getElementById('profile-name-modal')?.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
             currentUser = null;
             cards = [];
             expenses = [];
             document.getElementById('user-greeting').innerHTML = `¡Hola! <span class="text-xl">👋</span>`;
-            document.getElementById('profile-email-text').textContent = 'Sin sesión iniciada';
+            document.getElementById('profile-name-text').textContent = 'Sin sesión iniciada';
+            document.getElementById('profile-email-text').textContent = '';
             document.getElementById('profile-status-text').textContent = supabaseClient
                 ? 'Iniciá sesión para sincronizar tus datos'
                 : 'Falta conectar la base de datos';
 
             const actionBtn = document.getElementById('profile-action-btn');
             actionBtn.textContent = 'Iniciar Sesión';
-            actionBtn.className = 'bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md';
+            actionBtn.className = 'bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition-all shadow-md';
             actionBtn.onclick = openLoginModal;
+            updateBiometricSettingsUI();
             renderHome();
             renderCardsScreen();
             renderInstallmentsScreen();
@@ -1482,7 +1824,7 @@
                             </div>
                             
                             <div class="flex items-center gap-1 bg-slate-900/60 p-1 rounded-xl border border-slate-800">
-                                <button onclick="openCardModal('${escapeHtml(card.id)}')" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-indigo-400 text-xs transition-colors">
+                                <button onclick="openCardModal('${escapeHtml(card.id)}')" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-emerald-400 text-xs transition-colors">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
                                 <button onclick="deleteCard('${escapeHtml(card.id)}')" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-400 text-xs transition-colors">
@@ -1584,7 +1926,7 @@
                 carousel.appendChild(cardCard);
 
                 const dot = document.createElement('button');
-                dot.className = `w-2 h-2 rounded-full transition-all ${index === activeCardIndex ? 'bg-indigo-500 w-5' : 'bg-slate-700'}`;
+                dot.className = `w-2 h-2 rounded-full transition-all ${index === activeCardIndex ? 'bg-emerald-500 w-5' : 'bg-slate-700'}`;
                 dot.onclick = () => selectCardIndex(index);
                 dotsContainer.appendChild(dot);
             });
@@ -1600,7 +1942,7 @@
             
             const dots = document.getElementById('carousel-dots').children;
             Array.from(dots).forEach((dot, idx) => {
-                dot.className = `w-2 h-2 rounded-full transition-all ${idx === activeCardIndex ? 'bg-indigo-500 w-5' : 'bg-slate-700'}`;
+                dot.className = `w-2 h-2 rounded-full transition-all ${idx === activeCardIndex ? 'bg-emerald-500 w-5' : 'bg-slate-700'}`;
             });
 
             renderCardMovements(cards[activeCardIndex]);
@@ -1615,7 +1957,7 @@
                     activeCardIndex = newIndex;
                     const dots = document.getElementById('carousel-dots').children;
                     Array.from(dots).forEach((dot, idx) => {
-                        dot.className = `w-2 h-2 rounded-full transition-all ${idx === activeCardIndex ? 'bg-indigo-500 w-5' : 'bg-slate-700'}`;
+                        dot.className = `w-2 h-2 rounded-full transition-all ${idx === activeCardIndex ? 'bg-emerald-500 w-5' : 'bg-slate-700'}`;
                     });
                     renderCardMovements(cards[activeCardIndex]);
                 }
@@ -1683,14 +2025,14 @@
                     item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center transition-all hover:border-slate-700/80';
                     item.innerHTML = `
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-indigo-400 text-sm">
+                            <div class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-emerald-400 text-sm">
                                 <i class="fa-solid ${catIcon}"></i>
                             </div>
                             <div>
                             <h4 class="text-xs font-bold text-white">${escapeHtml(exp.title)}</h4>
                                 <div class="flex items-center gap-2 mt-0.5">
                                     <span class="text-[10px] text-slate-400">${escapeHtml(exp.category)}</span>
-                                    <span class="text-[9px] bg-slate-800 text-indigo-300 px-1.5 py-0.2 rounded-md border border-slate-700">
+                                    <span class="text-[9px] bg-slate-800 text-emerald-300 px-1.5 py-0.2 rounded-md border border-slate-700">
                                         ${exp.installments === 'sub' ? 'Suscripción' : exp.installments === '1' ? 'Contado' : exp.installments + ' cuotas'}
                                     </span>
                                 </div>
@@ -1739,7 +2081,7 @@
 
             const labels = Object.keys(totalsByCategory);
             const data = Object.values(totalsByCategory);
-            const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#8b5cf6'];
+            const colors = ['#10b981', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#14b8a6'];
 
             categoryChartInstance = new Chart(ctx, {
                 type: 'doughnut',
@@ -1807,7 +2149,7 @@
                     item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center transition-all hover:border-slate-700/80';
                     item.innerHTML = `
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm">
                                 <i class="fa-solid fa-calendar-day"></i>
                             </div>
                             <div>
@@ -1884,9 +2226,15 @@
             const amount = Number(value) || 0;
             const prefix = currency === 'USD' ? 'US$' : '$';
             const absoluteAmount = Math.abs(amount);
-            if (absoluteAmount >= 1000000) return `${prefix}${(amount / 1000000).toFixed(1)} M`;
-            if (absoluteAmount >= 1000) return `${prefix}${(amount / 1000).toFixed(absoluteAmount >= 10000 ? 0 : 1)} mil`;
-            return `${prefix}${Math.round(amount)}`;
+            const compact = number => number.toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            if (absoluteAmount >= 1000000) return `${prefix}${compact(amount / 1000000)} M`;
+            if (absoluteAmount >= 1000) return `${prefix}${compact(amount / 1000)} k`;
+            return `${prefix} ${Math.round(amount).toLocaleString('es-AR')}`;
+        }
+
+        function setProjectionCurrency(currency) {
+            projectionCurrency = currency === 'USD' ? 'USD' : 'ARS';
+            renderInstallmentsScreen();
         }
 
         function renderProjectionChart(projection) {
@@ -1908,69 +2256,62 @@
             chartContainer.classList.remove('hidden');
             emptyState.classList.add('hidden');
 
-            const labels = projection.months.map((month, index) =>
-                index === 0 ? `${formatProjectionMonth(month)} (este mes)` : formatProjectionMonth(month)
-            );
+            const hasARS = projection.ars.some(amount => amount > 0);
+            const hasUSD = projection.usd.some(amount => amount > 0);
+            if (projectionCurrency === 'ARS' && !hasARS && hasUSD) projectionCurrency = 'USD';
+            else if (projectionCurrency === 'USD' && !hasUSD && hasARS) projectionCurrency = 'ARS';
+            const currencyData = projectionCurrency === 'USD' ? projection.usd : projection.ars;
+            const currencyName = projectionCurrency === 'USD' ? 'Dólares (US$)' : 'Pesos ($)';
+            document.getElementById('projection-currency-ars').className = `px-2.5 py-1.5 text-[10px] font-semibold rounded-lg transition-colors ${projectionCurrency === 'ARS' ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-400'}`;
+            document.getElementById('projection-currency-usd').className = `px-2.5 py-1.5 text-[10px] font-semibold rounded-lg transition-colors ${projectionCurrency === 'USD' ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-400'}`;
+            const labels = projection.months.map(month => formatProjectionMonth(month).toLowerCase());
             const isLight = document.documentElement.classList.contains('light');
             const tickColor = isLight ? '#64748b' : '#94a3b8';
             const gridColor = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.05)';
 
             projectionChartInstance = new Chart(canvas.getContext('2d'), {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Pesos ($)',
-                        data: projection.ars,
-                        yAxisID: 'yARS',
-                        backgroundColor: 'rgba(99, 102, 241, 0.82)',
-                        borderColor: '#818cf8',
-                        borderWidth: 1,
-                        borderRadius: 6,
-                        maxBarThickness: 14
-                    }, {
-                        label: 'Dólares (US$)',
-                        data: projection.usd,
-                        yAxisID: 'yUSD',
-                        backgroundColor: 'rgba(16, 185, 129, 0.76)',
-                        borderColor: '#34d399',
-                        borderWidth: 1,
-                        borderRadius: 6,
-                        maxBarThickness: 14
+                        label: currencyName,
+                        data: currencyData,
+                        borderColor: '#70c995',
+                        borderWidth: 3,
+                        tension: 0,
+                        fill: false,
+                        pointRadius: 5.5,
+                        pointHoverRadius: 7,
+                        pointBorderWidth: 3,
+                        pointBackgroundColor: isLight ? '#ffffff' : '#0b0f19',
+                        pointBorderColor: '#70c995',
+                        pointHoverBackgroundColor: isLight ? '#ffffff' : '#0b0f19',
+                        pointHoverBorderColor: '#70c995'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
+                    interaction: { mode: 'nearest', intersect: false },
                     plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            align: 'start',
-                            labels: { color: tickColor, boxWidth: 9, boxHeight: 9, padding: 12, usePointStyle: true, pointStyle: 'rectRounded', font: { size: 9 } }
-                        },
+                        legend: { display: false },
                         tooltip: {
                             callbacks: {
-                                label: context => `${context.dataset.label}: ${formatMoney(context.parsed.y, context.dataset.yAxisID === 'yUSD' ? 'USD' : 'ARS')}`
+                                label: context => `${context.dataset.label}: ${formatMoney(context.parsed.y, projectionCurrency)}`
                             }
                         }
                     },
                     scales: {
-                        x: { ticks: { color: tickColor, font: { size: 8 }, maxRotation: 0, minRotation: 0, autoSkip: false }, grid: { display: false } },
-                        yARS: {
-                            type: 'linear',
-                            position: 'left',
-                            beginAtZero: true,
-                            ticks: { color: '#a5b4fc', font: { size: 8 }, callback: value => formatCompactMoney(value, 'ARS') },
-                            grid: { color: gridColor }
+                        x: {
+                            ticks: { color: tickColor, font: { size: 9 }, maxRotation: 0, minRotation: 0, autoSkip: true, maxTicksLimit: 7 },
+                            grid: { display: false },
+                            border: { display: false }
                         },
-                        yUSD: {
-                            type: 'linear',
-                            position: 'right',
+                        y: {
                             beginAtZero: true,
-                            ticks: { color: '#6ee7b7', font: { size: 8 }, callback: value => formatCompactMoney(value, 'USD') },
-                            grid: { drawOnChartArea: false }
+                            ticks: { color: tickColor, font: { size: 9 }, callback: value => formatCompactMoney(value, projectionCurrency), maxTicksLimit: 5 },
+                            grid: { color: gridColor, drawTicks: false },
+                            border: { display: false }
                         }
                     }
                 }
@@ -1984,7 +2325,7 @@
                 const btn = document.getElementById(`nav-${t}`);
                 if (screen) screen.classList.add('hidden');
                 if (btn) {
-                    btn.classList.remove('text-indigo-400');
+                    btn.classList.remove('text-emerald-400');
                     btn.classList.add('text-slate-400');
                 }
             });
@@ -1994,7 +2335,7 @@
             if (selectedScreen) selectedScreen.classList.remove('hidden');
             if (selectedBtn) {
                 selectedBtn.classList.remove('text-slate-400');
-                selectedBtn.classList.add('text-indigo-400');
+                selectedBtn.classList.add('text-emerald-400');
             }
 
             if (tab === 'cards') renderCardsScreen();
