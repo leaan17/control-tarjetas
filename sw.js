@@ -1,4 +1,4 @@
-const CACHE_NAME = "control-tarjetas-shell-v4";
+const CACHE_NAME = "control-tarjetas-shell-v5";
 const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/app.svg", "./icons/app-192.png", "./icons/app-512.png"];
 
 self.addEventListener("install", (event) => {

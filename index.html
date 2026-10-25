@@ -2088,6 +2088,11 @@
                     else if (exp.category === 'Auto / Transporte') catIcon = 'fa-car';
                     else if (exp.category === 'Hogar') catIcon = 'fa-house';
                     else if (exp.category === 'Tecnología') catIcon = 'fa-laptop';
+                    const installmentType = String(exp.installments ?? '1');
+                    const installmentCount = Number.parseInt(installmentType, 10);
+                    const amountPerInstallment = Number(exp.amount || 0) /
+                        (installmentType === 'sub' ? 1 : Number.isFinite(installmentCount) && installmentCount > 0 ? installmentCount : 1);
+                    const installmentAmountLabel = installmentType === 'sub' ? 'Mensual' : 'Cuota';
 
                     const item = document.createElement('div');
                     item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center transition-all hover:border-slate-700/80';
@@ -2111,6 +2116,9 @@
                             <div>
                                 <p class="text-xs font-bold ${exp.currency === 'USD' ? 'text-emerald-400' : 'text-white'}">
                                     ${formatMoney(exp.amount, exp.currency)}
+                                </p>
+                                <p class="text-[9px] text-slate-400 mt-0.5 whitespace-nowrap">
+                                    ${installmentAmountLabel}: ${formatMoney(amountPerInstallment, exp.currency)}
                                 </p>
                             </div>
                             <button onclick="deleteExpense('${escapeHtml(exp.id)}')" class="w-6 h-6 text-slate-500 hover:text-rose-400 transition-colors ml-1">
