@@ -368,32 +368,47 @@
                     <div id="carousel-dots" class="flex justify-center gap-1.5 mt-2"></div>
                 </div>
 
-                <div class="glass-panel p-5 rounded-3xl space-y-3 shadow-xl">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-receipt text-emerald-400"></i>
-                            <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Movimientos del Mes</span>
+                <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5 gap-2">
+                        <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i> Proyección por tarjeta
+                        </h3>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button" onclick="shiftCardProjectionMonth(-1)" aria-label="Mes anterior" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 hover:text-emerald-300 flex items-center justify-center">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <span id="card-projection-month-label" class="text-[10px] font-semibold text-white text-center min-w-[104px]">-</span>
+                            <button type="button" onclick="shiftCardProjectionMonth(1)" aria-label="Mes siguiente" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 hover:text-emerald-300 flex items-center justify-center">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
                         </div>
-                        <span id="active-card-name-label" class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">-</span>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <div class="bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
-                            <span class="text-xs text-slate-400 font-medium">Total Pesos</span>
-                            <p id="card-month-total-ars" class="text-lg font-bold text-white mt-0.5">$ 0</p>
+                    <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-slate-400 font-medium">Total estimado del mes</span>
+                            <span id="active-card-name-label" class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/20">-</span>
                         </div>
-                        <div class="bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
-                            <span class="text-xs text-slate-400 font-medium">Total Dólares</span>
-                            <p id="card-month-total-usd" class="text-lg font-bold text-emerald-400 mt-0.5">US$ 0,00</p>
-                        </div>
+                        <p id="card-month-total-ars" class="text-2xl font-extrabold text-white mt-1">$ 0</p>
+                        <p id="card-projection-conversion-note" class="text-[9px] leading-relaxed text-slate-500 mt-1">Incluye pesos y dólares convertidos al dólar tarjeta vendedor.</p>
                     </div>
+
+                    <div id="card-projection-chart-container" class="relative w-full h-56 touch-none overscroll-contain">
+                        <canvas id="cardProjectionChart" class="touch-none overscroll-contain"></canvas>
+                    </div>
+                    <div id="card-projection-empty" class="hidden p-5 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/40">
+                        <i class="fa-solid fa-chart-simple text-2xl text-slate-600 mb-2"></i>
+                        <p id="card-projection-empty-title" class="text-xs font-semibold text-slate-300">No hay cuotas para proyectar</p>
+                        <p id="card-projection-empty-description" class="text-[10px] text-slate-500 mt-1">Las cuotas activas aparecerán mes a mes acá.</p>
+                    </div>
+                    <p class="text-[10px] leading-relaxed text-slate-500">Usá las flechas para cambiar el mes. La línea muestra los próximos 12 meses de esta tarjeta.</p>
                 </div>
 
                 <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800">
                     <button onclick="toggleMovementsAccordion()" class="w-full p-4 flex justify-between items-center hover:bg-slate-800/40 transition-colors text-left">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-list-ul text-slate-400"></i>
-                            <h3 class="text-sm font-bold text-white">Movimientos Actuales</h3>
+                            <h3 class="text-sm font-bold text-white">Movimientos de <span id="card-movements-month-label">-</span></h3>
                             <span id="movements-count" class="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">0 consumos</span>
                         </div>
                         <i id="movements-chevron" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
@@ -404,22 +419,6 @@
                     </div>
                 </div>
 
-                <div class="glass-panel p-5 rounded-3xl space-y-4">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
-                        <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-chart-pie text-emerald-400"></i> Gastos por Categoría
-                        </h3>
-                        <span class="text-xs text-slate-400">Este mes</span>
-                    </div>
-
-                    <div class="relative w-full h-48 flex items-center justify-center">
-                        <canvas id="categoryChart"></canvas>
-                        <div id="chart-empty-msg" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 text-xs hidden">
-                            <i class="fa-solid fa-chart-pie text-3xl mb-1 text-slate-600"></i>
-                            Sin consumos registrados
-                        </div>
-                    </div>
-                </div>
             </section>
 
             <!-- PANTALLA 3: CUOTAS -->
@@ -919,7 +918,8 @@
         let expenses = [];
 
         let activeCardIndex = 0;
-        let categoryChartInstance = null;
+        let cardProjectionChartInstance = null;
+        let cardProjectionStartMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         let projectionChartInstance = null;
         let dollarCardSellRate = null;
         let dollarCardRateUpdatedAt = null;
@@ -2055,53 +2055,83 @@
             return `(${installmentNumber}/${totalInstallments})`;
         }
 
+        function shiftCardProjectionMonth(offset) {
+            cardProjectionStartMonth = new Date(
+                cardProjectionStartMonth.getFullYear(),
+                cardProjectionStartMonth.getMonth() + offset,
+                1
+            );
+            renderCardMovements(cards[activeCardIndex] || null);
+        }
+
+        function buildCardProjection(cardExpenses, monthCount = 12) {
+            const months = Array.from({ length: monthCount }, (_, index) =>
+                new Date(cardProjectionStartMonth.getFullYear(), cardProjectionStartMonth.getMonth() + index, 1)
+            );
+            const projection = {
+                months,
+                ars: Array(monthCount).fill(0),
+                usd: Array(monthCount).fill(0),
+                totalARS: Array(monthCount).fill(0)
+            };
+
+            cardExpenses.forEach(expense => {
+                months.forEach((month, index) => {
+                    const amount = getInstallmentAmountForMonth(expense, month);
+                    if (expense.currency === 'USD') projection.usd[index] += amount;
+                    else projection.ars[index] += amount;
+                });
+            });
+
+            projection.totalARS = projection.ars.map((amount, index) =>
+                amount + projection.usd[index] * (dollarCardSellRate || 0)
+            );
+            return projection;
+        }
+
         function renderCardMovements(card) {
             const activeLabel = document.getElementById('active-card-name-label');
             const totalARS = document.getElementById('card-month-total-ars');
-            const totalUSD = document.getElementById('card-month-total-usd');
+            const conversionNote = document.getElementById('card-projection-conversion-note');
+            const monthLabel = document.getElementById('card-projection-month-label');
+            const movementsMonthLabel = document.getElementById('card-movements-month-label');
             const movementsList = document.getElementById('card-movements-list');
             const countLabel = document.getElementById('movements-count');
+            const selectedMonth = new Date(cardProjectionStartMonth.getFullYear(), cardProjectionStartMonth.getMonth(), 1);
+            const selectedMonthName = formatProjectionMonthYear(selectedMonth);
+            monthLabel.textContent = selectedMonthName;
+            movementsMonthLabel.textContent = selectedMonthName;
 
-            if (!card) {
-                activeLabel.textContent = 'Sin tarjeta';
-                totalARS.textContent = '$ 0';
-                totalUSD.textContent = 'US$ 0,00';
-                movementsList.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No hay consumos registrados</p>';
-                countLabel.textContent = '0 consumos';
-                renderCategoryChart([]);
-                return;
-            }
+            const cardExpenses = card ? expenses.filter(expense => expense.cardId === card.id) : [];
+            const projection = buildCardProjection(cardExpenses, 12);
+            activeLabel.textContent = card ? card.name : 'Sin tarjeta';
+            totalARS.textContent = formatMovementMoney(projection.totalARS[0], 'ARS');
+            conversionNote.textContent = formatProjectionConversionNote(projection, selectedMonthName);
 
-            activeLabel.textContent = card.name;
-            const cardExpenses = expenses.filter(e => e.cardId === card.id);
-            countLabel.textContent = `${cardExpenses.length} consumos`;
-
-            let sumARS = 0;
-            let sumUSD = 0;
-
+            const monthExpenses = cardExpenses.filter(expense =>
+                getInstallmentAmountForMonth(expense, selectedMonth) > 0
+            );
+            countLabel.textContent = `${monthExpenses.length} ${monthExpenses.length === 1 ? 'cargo' : 'cargos'}`;
             movementsList.innerHTML = '';
 
-            if (cardExpenses.length === 0) {
+            if (monthExpenses.length === 0) {
+                const message = cardExpenses.length === 0
+                    ? 'Esta tarjeta todavía no tiene movimientos registrados.'
+                    : `No hay cargos activos en ${selectedMonthName.toLowerCase()}.`;
                 movementsList.innerHTML = `
                     <div class="glass-panel p-5 text-center rounded-2xl border border-dashed border-slate-800">
                         <i class="fa-solid fa-receipt text-2xl text-slate-600 mb-1"></i>
-                        <p class="text-xs text-slate-400 font-medium">Esta tarjeta no tiene movimientos registrados</p>
+                        <p class="text-xs text-slate-400 font-medium">${escapeHtml(message)}</p>
                     </div>
                 `;
             } else {
-                cardExpenses.forEach(exp => {
-                    if (exp.currency === 'USD') sumUSD += exp.amount;
-                    else sumARS += exp.amount;
-
+                monthExpenses.forEach(exp => {
+                    const monthlyAmount = getInstallmentAmountForMonth(exp, selectedMonth);
                     let catIcon = 'fa-bag-shopping';
                     if (exp.category === 'Alimentación') catIcon = 'fa-utensils';
                     else if (exp.category === 'Auto / Transporte') catIcon = 'fa-car';
                     else if (exp.category === 'Hogar') catIcon = 'fa-house';
                     else if (exp.category === 'Tecnología') catIcon = 'fa-laptop';
-                    const installmentType = String(exp.installments ?? '1');
-                    const installmentCount = Number.parseInt(installmentType, 10);
-                    const amountPerInstallment = Number(exp.amount || 0) /
-                        (installmentType === 'sub' ? 1 : Number.isFinite(installmentCount) && installmentCount > 0 ? installmentCount : 1);
 
                     const item = document.createElement('div');
                     item.className = 'glass-panel p-3.5 rounded-2xl flex justify-between items-center gap-2 transition-all hover:border-slate-700/80';
@@ -2115,7 +2145,7 @@
                                 <div class="flex items-center gap-1.5 mt-0.5 min-w-0">
                                     <span class="text-[10px] text-slate-400 truncate">${escapeHtml(exp.category)}</span>
                                     <span class="text-[9px] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.2 rounded-md border border-emerald-500/20 shrink-0">
-                                        ${formatExpenseInstallmentProgress(exp)}
+                                        ${formatExpenseInstallmentProgress(exp, selectedMonth)}
                                     </span>
                                 </div>
                             </div>
@@ -2127,7 +2157,7 @@
                                     ${formatMovementMoney(exp.amount, exp.currency)}
                                 </p>
                                 <p class="text-[9px] text-slate-400 mt-0.5 whitespace-nowrap">
-                                    ${formatMovementMoney(amountPerInstallment, exp.currency)}
+                                    ${formatMovementMoney(monthlyAmount, exp.currency)}
                                 </p>
                             </div>
                             <button onclick="deleteExpense('${escapeHtml(exp.id)}')" class="w-6 h-6 text-slate-500 hover:text-rose-400 transition-colors ml-1">
@@ -2139,48 +2169,84 @@
                 });
             }
 
-            totalARS.textContent = formatMoney(sumARS, 'ARS');
-            totalUSD.textContent = formatMoney(sumUSD, 'USD');
-
-            renderCategoryChart(cardExpenses);
+            renderCardProjectionChart(projection);
         }
 
-        function renderCategoryChart(cardExpenses) {
-            const ctx = document.getElementById('categoryChart').getContext('2d');
-            const emptyMsg = document.getElementById('chart-empty-msg');
-
-            if (categoryChartInstance) categoryChartInstance.destroy();
-
-            if (!cardExpenses || cardExpenses.length === 0) {
-                emptyMsg.classList.remove('hidden');
-                return;
-            } else {
-                emptyMsg.classList.add('hidden');
+        function renderCardProjectionChart(projection) {
+            const canvas = document.getElementById('cardProjectionChart');
+            const chartContainer = document.getElementById('card-projection-chart-container');
+            const emptyState = document.getElementById('card-projection-empty');
+            if (cardProjectionChartInstance) {
+                cardProjectionChartInstance.destroy();
+                cardProjectionChartInstance = null;
             }
 
-            const totalsByCategory = {};
-            cardExpenses.forEach(e => {
-                const cat = e.category || 'Varios';
-                totalsByCategory[cat] = (totalsByCategory[cat] || 0) + e.amount;
-            });
+            const hasForecast = projection.totalARS.some(amount => amount > 0);
+            if (!hasForecast) {
+                chartContainer.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                const waitingForRate = projection.usd.some(amount => amount > 0) && !dollarCardSellRate;
+                document.getElementById('card-projection-empty-title').textContent = waitingForRate
+                    ? 'Falta la cotización del dólar tarjeta'
+                    : 'No hay gastos para proyectar';
+                document.getElementById('card-projection-empty-description').textContent = waitingForRate
+                    ? 'Actualizá la cotización para incluir los cargos en dólares.'
+                    : 'Las cuotas activas de esta tarjeta aparecerán acá.';
+                return;
+            }
 
-            const labels = Object.keys(totalsByCategory);
-            const data = Object.values(totalsByCategory);
-            const colors = ['#10b981', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#14b8a6'];
+            chartContainer.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            const labels = projection.months.map(month => formatProjectionMonth(month).toLowerCase());
+            const isLight = document.documentElement.classList.contains('light');
+            const tickColor = isLight ? '#64748b' : '#94a3b8';
+            const gridColor = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.05)';
 
-            categoryChartInstance = new Chart(ctx, {
-                type: 'doughnut',
+            cardProjectionChartInstance = new Chart(canvas.getContext('2d'), {
+                type: 'line',
                 data: {
-                    labels: labels,
-                    datasets: [{ data: data, backgroundColor: colors.slice(0, labels.length), borderWidth: 0 }]
+                    labels,
+                    datasets: [{
+                        label: 'Gasto estimado de la tarjeta',
+                        data: projection.totalARS,
+                        borderColor: '#70c995',
+                        borderWidth: 3,
+                        tension: 0,
+                        fill: false,
+                        pointRadius: 5.5,
+                        pointHoverRadius: 7,
+                        pointBorderWidth: 3,
+                        pointBackgroundColor: isLight ? '#ffffff' : '#0b0f19',
+                        pointBorderColor: '#70c995',
+                        pointHoverBackgroundColor: isLight ? '#ffffff' : '#0b0f19',
+                        pointHoverBorderColor: '#70c995'
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: { mode: 'nearest', intersect: false },
                     plugins: {
-                        legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10, family: 'Inter' }, boxWidth: 10 } }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${formatMovementMoney(context.parsed.y, 'ARS')}`
+                            }
+                        }
                     },
-                    cutout: '70%'
+                    scales: {
+                        x: {
+                            ticks: { color: tickColor, font: { size: 9 }, maxRotation: 0, minRotation: 0, autoSkip: true, maxTicksLimit: 7 },
+                            grid: { display: false },
+                            border: { display: false }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: tickColor, font: { size: 9 }, callback: value => formatCompactMoney(value), maxTicksLimit: 5 },
+                            grid: { color: gridColor, drawTicks: false },
+                            border: { display: false }
+                        }
+                    }
                 }
             });
         }
@@ -2306,7 +2372,7 @@
             return amount / installmentCount;
         }
 
-        function formatProjectionConversionNote(projection) {
+        function formatProjectionConversionNote(projection, monthLabel = 'Este mes') {
             if (!dollarCardSellRate) {
                 return projection.usd[0] > 0
                     ? `No hay cotización para convertir ${formatMoney(projection.usd[0], 'USD')}. El total muestra solo pesos hasta que se pueda actualizar el dólar tarjeta.`
@@ -2318,7 +2384,7 @@
                 ? new Intl.DateTimeFormat('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }).format(updatedAt).replace(/\./g, '')
                 : 'última cotización disponible';
             if (projection.usd[0] > 0) {
-                return `Este mes: ${formatMoney(projection.ars[0], 'ARS')} + ${formatMoney(projection.usd[0], 'USD')} × ${rate} por US$1. Cotización dólar tarjeta venta: ${dateLabel}.`;
+                return `${monthLabel}: ${formatMoney(projection.ars[0], 'ARS')} + ${formatMoney(projection.usd[0], 'USD')} × ${rate} por US$1. Cotización dólar tarjeta venta: ${dateLabel}.`;
             }
             return `Los dólares se convierten al dólar tarjeta vendedor (${rate} por US$1). Cotización: ${dateLabel}.`;
         }
@@ -2326,6 +2392,14 @@
         function formatProjectionMonth(date) {
             const month = new Intl.DateTimeFormat('es-AR', { month: 'short' }).format(date).replace(/\./g, '').trim();
             return month.charAt(0).toUpperCase() + month.slice(1);
+        }
+
+        function formatProjectionMonthYear(date) {
+            return new Intl.DateTimeFormat('es-AR', { month: 'short', year: 'numeric' })
+                .format(date)
+                .replace(/\./g, '')
+                .trim()
+                .replace(/^\p{L}/u, letter => letter.toLocaleUpperCase('es-AR'));
         }
 
         function formatCompactMoney(value) {
@@ -2639,3 +2713,4 @@
     </script>
 </body>
 </html>
+

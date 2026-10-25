@@ -1,4 +1,4 @@
-const CACHE_NAME = "control-tarjetas-shell-v6";
+const CACHE_NAME = "control-tarjetas-shell-v7";
 const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/app.svg", "./icons/app-192.png", "./icons/app-512.png"];
 
 self.addEventListener("install", (event) => {
@@ -23,3 +23,4 @@ self.addEventListener("fetch", (event) => {
     }).catch(() => caches.match("./index.html"))
   );
 });
+
