@@ -1861,12 +1861,16 @@
                 `;
             } else {
                 cards.forEach(card => {
-                    totalDebtARS += Number(card.debtARS);
-                    totalDebtUSD += Number(card.debtUSD);
-                    totalLimitARS += Number(card.limit);
+                    const usedDebtARS = Number(card.debtARS) || 0;
+                    const usedDebtUSD = Number(card.debtUSD) || 0;
+                    const cardLimitARS = Number(card.limit) || 0;
+                    totalDebtARS += usedDebtARS;
+                    totalDebtUSD += usedDebtUSD;
+                    totalLimitARS += cardLimitARS;
 
-                    const usedPercentage = card.limit > 0 ? Math.min(Math.round((card.debtARS / card.limit) * 100), 100) : 0;
-                    const availableARS = Math.max(card.limit - card.debtARS, 0);
+                    const usedPercentage = cardLimitARS > 0 ? Math.min(Math.round((usedDebtARS / cardLimitARS) * 100), 100) : 0;
+                    const availableARS = Math.max(cardLimitARS - usedDebtARS, 0);
+                    const usedDebtUSDLabel = `${usedDebtUSD > 0 ? '+ ' : ''}US$ ${usedDebtUSD.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
                     let barColorClass = 'bg-emerald-500';
                     let textColorClass = 'text-emerald-400';
@@ -1904,6 +1908,17 @@
                                 <button onclick="deleteCard('${escapeHtml(card.id)}')" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-400 text-xs transition-colors">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 items-end gap-2 pt-1">
+                            <div class="min-w-0">
+                                <p class="text-[9px] text-slate-400">Utilizado en pesos</p>
+                                <p class="text-sm font-bold text-white truncate">${formatMovementMoney(usedDebtARS, 'ARS')}</p>
+                            </div>
+                            <div class="text-right min-w-0">
+                                <p class="text-[9px] text-slate-400">Utilizado en dólares</p>
+                                <p class="text-xs font-bold text-emerald-400 whitespace-nowrap">${usedDebtUSDLabel}</p>
                             </div>
                         </div>
 
