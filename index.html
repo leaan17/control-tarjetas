@@ -308,6 +308,14 @@
             <section id="screen-home" class="space-y-5">
                 <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl relative overflow-hidden">
                     <div class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-600/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl px-3.5 py-3 flex justify-between items-center gap-3">
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Total de este mes</p>
+                            <p id="home-month-total" class="text-xl font-extrabold text-white mt-0.5">$ 0,00</p>
+                        </div>
+                        <i class="fa-solid fa-calendar-check text-emerald-400"></i>
+                    </div>
                     
                     <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
                         <span class="text-xs font-medium text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -690,14 +698,15 @@
             <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-cart-plus text-emerald-400"></i> Registrar Compra
+                        <i class="fa-solid fa-cart-plus text-emerald-400"></i> <span id="expense-modal-heading">Registrar Compra</span>
                     </h3>
                     <button onclick="closeAddExpenseModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
                 
-                <form id="expense-form" onsubmit="handleAddExpense(event)" class="space-y-3.5">
+                <form id="expense-form" onsubmit="handleSaveExpense(event)" class="space-y-3.5">
+                    <input type="hidden" id="expense-id">
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1.5">Seleccionar Tarjeta</label>
                         <div class="custom-select-wrapper">
@@ -707,7 +716,7 @@
 
                     <div class="grid grid-cols-3 gap-2">
                         <div class="col-span-2">
-                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Monto Total</label>
+                            <label id="expense-amount-label" class="block text-xs font-semibold text-slate-300 mb-1.5">Monto Total</label>
                             <input type="number" id="expense-amount" required step="0.01" min="0.01" placeholder="Ej: 25000" class="app-input">
                         </div>
                         <div>
@@ -757,7 +766,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1.5">Plan de Cuotas</label>
                         <div class="custom-select-wrapper">
-                            <select id="expense-installments" class="app-input pr-8">
+                            <select id="expense-installments" onchange="updateExpenseAmountLabel()" class="app-input pr-8">
                                 <option value="1">1 pago (contado)</option>
                                 <option value="2">2 cuotas</option>
                                 <option value="3">3 cuotas</option>
@@ -776,7 +785,7 @@
 
                     <div class="pt-2 flex gap-3">
                         <button type="button" onclick="closeAddExpenseModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl text-sm font-semibold">Cancelar</button>
-                        <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-emerald-600/30">Guardar Compra</button>
+                        <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-emerald-600/30"><span id="expense-submit-label">Guardar Compra</span></button>
                     </div>
                 </form>
             </div>
@@ -949,10 +958,10 @@
         let biometricSetupPromptedFor = '';
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderHome();
             initializeCustomSelects();
             setupCarouselScroll();
             loadCachedDollarCardRate();
+            renderHome();
             fetchDollarRates();
 
             setExpenseDate(getLocalISODate());
@@ -1278,6 +1287,7 @@
                     `;
                     container.appendChild(card);
                 });
+                renderHome();
                 if (!document.getElementById('screen-installments').classList.contains('hidden')) {
                     renderInstallmentsScreen();
                 }
@@ -1843,6 +1853,10 @@
         function renderHome() {
             const cardsContainer = document.getElementById('cards-container');
             const cardCountBadge = document.getElementById('card-count-badge');
+            const now = new Date();
+            const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const currentMonthProjection = buildInstallmentProjection(1, currentMonth);
+            document.getElementById('home-month-total').textContent = formatMovementMoney(currentMonthProjection.totalARS[0], 'ARS');
             
             let totalDebtARS = 0;
             let totalDebtUSD = 0;
@@ -2190,7 +2204,10 @@
                                     ${formatMovementMoney(monthlyAmount, exp.currency)}
                                 </p>
                             </div>
-                            <button onclick="deleteExpense('${escapeHtml(exp.id)}')" class="w-6 h-6 text-slate-500 hover:text-rose-400 transition-colors ml-1">
+                            <button type="button" onclick="editExpense('${escapeHtml(exp.id)}')" aria-label="Editar gasto" class="w-6 h-6 text-slate-500 hover:text-emerald-400 transition-colors">
+                                <i class="fa-solid fa-pen text-[10px]"></i>
+                            </button>
+                            <button type="button" onclick="deleteExpense('${escapeHtml(exp.id)}')" aria-label="Eliminar gasto" class="w-6 h-6 text-slate-500 hover:text-rose-400 transition-colors ml-1">
                                 <i class="fa-solid fa-xmark text-xs"></i>
                             </button>
                         </div>
@@ -2352,10 +2369,13 @@
                                 <p class="text-[10px] text-slate-400">${card ? escapeHtml(card.name) : 'Tarjeta'} • ${planDetail}</p>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <p class="text-xs font-bold ${exp.currency === 'USD' ? 'text-emerald-400' : 'text-white'}">
+                        <div class="flex items-center gap-2 shrink-0">
+                            <p class="text-right text-xs font-bold ${exp.currency === 'USD' ? 'text-emerald-400' : 'text-white'}">
                                 ${formatMovementMoney(monthlyValue, exp.currency)} ${isSinglePayment ? 'único' : '/ mes'}
                             </p>
+                            <button type="button" onclick="editExpense('${escapeHtml(exp.id)}')" aria-label="Editar gasto" class="w-7 h-7 text-slate-500 hover:text-emerald-400 transition-colors">
+                                <i class="fa-solid fa-pen text-[10px]"></i>
+                            </button>
                         </div>
                     `;
                     plansList.appendChild(item);
@@ -2419,9 +2439,9 @@
             container.classList.add('flex');
         }
 
-        function buildInstallmentProjection(monthCount) {
+        function buildInstallmentProjection(monthCount, startMonth = installmentProjectionStartMonth) {
             const months = Array.from({ length: monthCount }, (_, index) =>
-                new Date(installmentProjectionStartMonth.getFullYear(), installmentProjectionStartMonth.getMonth() + index, 1)
+                new Date(startMonth.getFullYear(), startMonth.getMonth() + index, 1)
             );
             const projection = {
                 months,
@@ -2699,11 +2719,45 @@
 
             const expenseForm = document.getElementById('expense-form');
             if (expenseForm) expenseForm.reset();
+            document.getElementById('expense-id').value = '';
+            document.getElementById('expense-modal-heading').textContent = 'Registrar Compra';
+            document.getElementById('expense-submit-label').textContent = 'Guardar Compra';
 
             setExpenseDate(getLocalISODate());
 
             const select = document.getElementById('expense-card-id');
             select.innerHTML = cards.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join('');
+            select.value = cards[0]?.id || '';
+            updateExpenseAmountLabel();
+            expenseForm.querySelectorAll('select.app-input').forEach(refreshCustomSelect);
+            document.getElementById('expense-modal').classList.remove('hidden');
+        }
+
+        function updateExpenseAmountLabel() {
+            const isSubscription = document.getElementById('expense-installments').value === 'sub';
+            document.getElementById('expense-amount-label').textContent = isSubscription ? 'Monto Mensual' : 'Monto Total';
+        }
+
+        function editExpense(expenseId) {
+            const expense = expenses.find(item => item.id === expenseId);
+            if (!expense || cards.length === 0) return;
+
+            const expenseForm = document.getElementById('expense-form');
+            expenseForm.reset();
+            document.getElementById('expense-id').value = expense.id;
+            document.getElementById('expense-modal-heading').textContent = 'Editar gasto';
+            document.getElementById('expense-submit-label').textContent = 'Guardar cambios';
+
+            const cardSelect = document.getElementById('expense-card-id');
+            cardSelect.innerHTML = cards.map(card => `<option value="${escapeHtml(card.id)}">${escapeHtml(card.name)}</option>`).join('');
+            cardSelect.value = expense.cardId;
+            document.getElementById('expense-amount').value = expense.amount;
+            document.getElementById('expense-currency').value = expense.currency || 'ARS';
+            document.getElementById('expense-title').value = expense.title;
+            document.getElementById('expense-category').value = expense.category;
+            document.getElementById('expense-installments').value = String(expense.installments ?? '1');
+            updateExpenseAmountLabel();
+            setExpenseDate(expense.date);
             expenseForm.querySelectorAll('select.app-input').forEach(refreshCustomSelect);
             document.getElementById('expense-modal').classList.remove('hidden');
         }
@@ -2711,13 +2765,21 @@
         function closeAddExpenseModal() {
             closeExpenseCalendar();
             document.getElementById('expense-modal').classList.add('hidden');
+            document.getElementById('expense-id').value = '';
         }
 
-        async function handleAddExpense(e) {
+        async function handleSaveExpense(e) {
             e.preventDefault();
             if (!currentUser) return;
             const previousCards = cards;
             const previousExpenses = expenses;
+            const expenseId = document.getElementById('expense-id').value;
+            const existingExpense = expenseId ? expenses.find(item => item.id === expenseId) : null;
+            if (expenseId && !existingExpense) {
+                showToast('No se encontró el gasto para editar');
+                return;
+            }
+
             const cardId = document.getElementById('expense-card-id').value;
             const amount = parseFloat(document.getElementById('expense-amount').value) || 0;
             const currency = document.getElementById('expense-currency').value;
@@ -2726,15 +2788,29 @@
             const category = document.getElementById('expense-category').value;
             const installments = document.getElementById('expense-installments').value;
 
-            cards = cards.map(c => {
-                if (c.id === cardId) {
-                    if (currency === 'USD') return { ...c, debtUSD: c.debtUSD + amount };
-                    else return { ...c, debtARS: c.debtARS + amount };
-                }
-                return c;
-            });
+            const updateCardDebt = (targetCardId, targetCurrency, delta) => {
+                const debtField = targetCurrency === 'USD' ? 'debtUSD' : 'debtARS';
+                cards = cards.map(card => card.id === targetCardId
+                    ? { ...card, [debtField]: Math.max(0, (Number(card[debtField]) || 0) + delta) }
+                    : card
+                );
+            };
 
-            expenses.unshift({ id: crypto.randomUUID(), cardId, amount, currency, title, category, installments, date: rawDate });
+            const updatedExpense = { id: expenseId || crypto.randomUUID(), cardId, amount, currency, title, category, installments, date: rawDate };
+            if (existingExpense) {
+                const previousCurrency = existingExpense.currency || 'ARS';
+                const previousAmount = Number(existingExpense.amount) || 0;
+                if (existingExpense.cardId === cardId && previousCurrency === currency) {
+                    updateCardDebt(cardId, currency, amount - previousAmount);
+                } else {
+                    updateCardDebt(existingExpense.cardId, previousCurrency, -previousAmount);
+                    updateCardDebt(cardId, currency, amount);
+                }
+                expenses = expenses.map(item => item.id === expenseId ? updatedExpense : item);
+            } else {
+                updateCardDebt(cardId, currency, amount);
+                expenses.unshift(updatedExpense);
+            }
 
             const saved = await saveCloudData();
             if (!saved) {
@@ -2749,7 +2825,7 @@
             renderHome();
             renderCardsScreen();
             renderInstallmentsScreen();
-            showToast('Compra registrada');
+            showToast(existingExpense ? 'Gasto actualizado' : 'Compra registrada');
         }
 
         async function deleteExpense(expId) {
