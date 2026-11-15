@@ -1,7 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#0b0f19"/>
-  <rect x="76" y="126" width="360" height="260" rx="34" fill="#10b981"/>
-  <path d="M76 190h360v54H76z" fill="#047857"/>
-  <rect x="112" y="294" width="92" height="26" rx="13" fill="#d1fae5"/>
-  <rect x="324" y="294" width="72" height="26" rx="13" fill="#6ee7b7"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0b0f19"/>
+  <defs>
+    <clipPath id="card-shape">
+      <rect x="62" y="122" width="388" height="268" rx="72"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#card-shape)">
+    <rect x="62" y="122" width="388" height="268" fill="#10b981"/>
+    <path d="M62 184h388v62H62z" fill="#047857"/>
+  </g>
+  <rect x="96" y="306" width="102" height="28" rx="14" fill="#d1fae5"/>
+  <rect x="316" y="306" width="88" height="28" rx="14" fill="#6ee7b7"/>
 </svg>
+
